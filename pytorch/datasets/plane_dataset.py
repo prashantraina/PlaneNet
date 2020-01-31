@@ -3,7 +3,7 @@ from torch.utils.data import Dataset
 import numpy as np
 import time
 
-from plane_dataset_scannet import PlaneDatasetScanNet
+from .plane_dataset_scannet import PlaneDatasetScanNet
 from augmentation import *
 from utils import *
 

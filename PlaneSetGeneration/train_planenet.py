@@ -610,7 +610,7 @@ def main(gpu_id, dumpdir, logdir, testdir, keyname, restore, numOutputPlanes=20,
                     last_snapshot_time = time.time()
                     pass
         
-                print bno,'train', ema[0] / ema_acc[0], 'val', ema[1] / ema_acc[1], 'loss', total_loss, loss_1, loss_2, loss_3, loss_4, 'time', time.time()-t0
+                print((bno,'train', ema[0] / ema_acc[0], 'val', ema[1] / ema_acc[1], 'loss', total_loss, loss_1, loss_2, loss_3, loss_4, 'time', time.time()-t0))
                 continue
 
         except tf.errors.OutOfRangeError:
@@ -731,7 +731,7 @@ def test(gpu_id, dumpdir, logdir, testdir, keyname, restore, numOutputPlanes=20,
             ranges = np.array([urange / imageWidth * 640 / focalLength, np.ones(urange.shape), -vrange / imageHeight * 480 / focalLength]).transpose([1, 2, 0])
 
 
-            for index in xrange(10):
+            for index in range(10):
                 print(('image', index))
                 t0=time.time()
                 #im, planes, depth, normal, boundary, s_8, p_8, b_8, s_16, p_16, b_16, s_32, p_32, b_32 = sess.run([img_inp, plane_gt, depth_gt, normal_gt, boundary_gt, s_8_gt, p_8_gt, b_8_gt, s_16_gt, p_16_gt, b_16_gt, s_32_gt, p_32_gt, b_32_gt])
@@ -955,14 +955,14 @@ def test(gpu_id, dumpdir, logdir, testdir, keyname, restore, numOutputPlanes=20,
                     #distance = distance[0]
                     print(distance)
                     diff = np.linalg.norm(np.expand_dims(planes, 1) - np.expand_dims(pred_p, 0), axis=2)
-                    print(np.concatenate([planes, pred_p, pow(np.min(diff, axis=1, keepdims=True), 2), np.expand_dims(np.argmin(diff, axis=1), -1)], axis=1))
+                    print((np.concatenate([planes, pred_p, pow(np.min(diff, axis=1, keepdims=True), 2), np.expand_dims(np.argmin(diff, axis=1), -1)], axis=1)))
                     print(pred_p_c)
                     
                     #print(distance[:, 6:8].sum(0))
                     #print(pow(np.linalg.norm(distance[:, :3] - distance[:, 3:6], 2, 1), 2) * 100)
                     #print(test)
                     segmentation = np.argmax(all_segmentations, 2) - 1
-                    for planeIndex in xrange(numOutputPlanes):
+                    for planeIndex in range(numOutputPlanes):
                         cv2.imwrite(testdir + '/segmentation_' + str(planeIndex) + '.png', drawMaskImage(segmentation == planeIndex))
                         cv2.imwrite(testdir + '/segmentation_' + str(planeIndex) + '_gt.png', drawMaskImage(gt_s[:, :, planeIndex]))
                         cv2.imwrite(testdir + '/segmentation_' + str(planeIndex) + '_gt_ori.png', drawMaskImage(gt_s_ori[:, :, planeIndex]))
@@ -1048,7 +1048,7 @@ def findBadImages(gpu_id, dumpdir, logdir, testdir, keyname, restore, numOutputP
             ranges = np.array([urange / imageWidth * 640 / focalLength, np.ones(urange.shape), -vrange / imageHeight * 480 / focalLength]).transpose([1, 2, 0])
 
 
-            for index in xrange(1000):
+            for index in range(1000):
                 if index % 10 == 0:
                     print(('image', index))
                 t0=time.time()
@@ -1168,7 +1168,7 @@ def predict(dumpdir, testdir, keyname, numOutputPlanes, useCRF=0, dataset='SUNCG
         for index, im_name in enumerate(im_names):
             if index <= -1:
                 continue
-            print(im_name['image'])
+            print((im_name['image']))
             im = cv2.imread(im_name['image'])
             image = im.astype(np.float32, copy=False)
             image = image / 255 - 0.5
@@ -1186,7 +1186,7 @@ def predict(dumpdir, testdir, keyname, numOutputPlanes, useCRF=0, dataset='SUNCG
 
             normal = np.array(PIL.Image.open(im_name['normal'])).astype(np.float) / 255 * 2 - 1
             norm = np.linalg.norm(normal, 2, 2)
-            for c in xrange(3):
+            for c in range(3):
                 normal[:, :, c] /= norm
                 continue
             normal = cv2.resize(normal, (WIDTH, HEIGHT), interpolation=cv2.INTER_LINEAR)
@@ -1272,7 +1272,7 @@ def predict(dumpdir, testdir, keyname, numOutputPlanes, useCRF=0, dataset='SUNCG
             #writePLYFile(testdir, index, image, pred_p, segmentation)
 
             if index < 0:
-                for planeIndex in xrange(numOutputPlanes):
+                for planeIndex in range(numOutputPlanes):
                     cv2.imwrite(testdir + '/' + str(index) + '_segmentation_' + str(planeIndex) + '.png', drawMaskImage(pred_s[:, :, planeIndex]))
                     #cv2.imwrite(testdir + '/' + str(index) + '_segmentation_' + str(planeIndex) + '_gt.png', drawMaskImage(gt_s[:, :, planeIndex]))
                     continue
@@ -1283,8 +1283,8 @@ def predict(dumpdir, testdir, keyname, numOutputPlanes, useCRF=0, dataset='SUNCG
         planeMasks = np.array(planeMasks)
         predMasks = np.array(predMasks)
         #evaluateDepths(predDepths, gtDepths, planeMasks, predMasks)
-        print(planeMasks.shape)
-        print(np.ones(planeMasks.shape, dtype=np.bool).sum())
+        print((planeMasks.shape))
+        print((np.ones(planeMasks.shape, dtype=np.bool).sum()))
         evaluateDepths(predDepths, gtDepths, np.ones(planeMasks.shape, dtype=np.bool), planeMasks)
         #exit(1)
         pass
@@ -1348,7 +1348,7 @@ def parse_args():
 if __name__=='__main__':
     args = parse_args()
 
-    print "dumpdir=%s task=%s started"%(args.dumpdir, args.task)
+    print(("dumpdir=%s task=%s started"%(args.dumpdir, args.task)))
     #fetchworker=BatchFetcher()    
     try:
         if args.task == "train":

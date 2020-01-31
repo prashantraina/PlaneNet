@@ -14,9 +14,9 @@
 # ==============================================================================
 """Simple examples of the REINFORCE algorithm."""
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
+
+
 
 import tensorflow as tf
 
@@ -121,10 +121,10 @@ class REINFORCESimpleExample(tf.test.TestCase):
         # Run loss and inference step.  This toy problem converges VERY quickly.
         (routing_loss_v, final_loss_v, route_selection_v, _) = sess.run(
             [routing_loss, final_loss, tf.identity(route_selection), sgd])
-        print(
+        print((
             "Iteration %d, routing loss: %s, final_loss: %s, "
             "route selection: %s"
-            % (i, routing_loss_v, final_loss_v, route_selection_v))
+            % (i, routing_loss_v, final_loss_v, route_selection_v)))
 
       self.assertAllEqual([0, 0, 1, 1], route_selection_v)
       self.assertAllClose([0.0, 0.0, 0.0, 0.0], routing_loss_v)

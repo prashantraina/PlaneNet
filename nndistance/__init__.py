@@ -1,1 +1,1 @@
-import tf_nndistance
+from . import tf_nndistance

@@ -257,7 +257,7 @@ end_header
                 continue
             continue
 
-        for index in xrange(pointCloudSource.shape[0] + pointCloudTarget.shape[0] + pointCloudSource.shape[0]):
+        for index in range(pointCloudSource.shape[0] + pointCloudTarget.shape[0] + pointCloudSource.shape[0]):
             planeIndex = index * 4
             f.write('4 ' + str(planeIndex + 0) + ' ' + str(planeIndex + 1) + ' ' + str(planeIndex + 2) + ' ' + str(planeIndex + 3) + '\n')
             continue
@@ -576,12 +576,12 @@ def evaluateNormal(predNormal, gtSegmentations, numPlanes):
     numImages = predNormal.shape[0]
     normal = np.linalg.norm(predNormal, axis=-1)
     errors = []
-    for imageIndex in xrange(numImages):
+    for imageIndex in range(numImages):
         var = 0
         count = 0
 
         invalidNormalMask = np.linalg.norm(predNormal[imageIndex], axis=-1) > 1 - 1e-4
-        for planeIndex in xrange(numPlanes[imageIndex]):
+        for planeIndex in range(numPlanes[imageIndex]):
             #mask = gtSegmentations[imageIndex, :, :, planeIndex].astype(np.bool)
             mask = gtSegmentations[imageIndex] == planeIndex
             mask = cv2.erode(mask.astype(np.float32), np.ones((5, 5))) > 0.5
@@ -599,7 +599,7 @@ def evaluateNormal(predNormal, gtSegmentations, numPlanes):
             #var += degrees.mean()
             #totalNumPlanes += 1
             #print(np.sum(normals * averageNormal, axis=-1))
-            print(planeIndex, degrees.sum() / degrees.shape[0])
+            print((planeIndex, degrees.sum() / degrees.shape[0]))
             cv2.imwrite('test/mask_' + str(planeIndex) + '.png', drawMaskImage(mask))
             #print(normals)
             # if planeIndex == 4:
@@ -758,8 +758,8 @@ def writePLYFile(folder, index, image, depth, segmentation, planes, info):
     croppingRatio = -0.05
     dotThreshold = np.cos(np.deg2rad(30))
 
-    for y in xrange(height - 1):
-        for x in xrange(width - 1):
+    for y in range(height - 1):
+        for x in range(width - 1):
             if y < height * croppingRatio or y > height * (1 - croppingRatio) or x < width * croppingRatio or x > width * (1 - croppingRatio):
                 continue
 
@@ -824,8 +824,8 @@ property list uchar float texcoord
 end_header
 """
         f.write(header)
-        for y in xrange(height):
-            for x in xrange(width):
+        for y in range(height):
+            for x in range(width):
                 segmentIndex = segmentation[y][x]
                 if segmentIndex == -1:
                     f.write("0.0 0.0 0.0\n")
@@ -844,11 +844,11 @@ end_header
 
         for face in faces:
             f.write('3 ')
-            for c in xrange(3):
+            for c in range(3):
                 f.write(str(face[c * 2 + 1] * width + face[c * 2]) + ' ')
                 continue
             f.write('6 ')
-            for c in xrange(3):
+            for c in range(3):
                 f.write(str(float(face[c * 2]) / width) + ' ' + str(1 - float(face[c * 2 + 1]) / height) + ' ')
                 continue
             f.write('\n')
@@ -888,8 +888,8 @@ def writePLYFileDepth(folder, index, image, depth, segmentation, planes, info):
     maxDepthDiff = 0.3
     #occlusionBoundary = boundaries[:, :, 1]
 
-    for y in xrange(height - 1):
-        for x in xrange(width - 1):
+    for y in range(height - 1):
+        for x in range(width - 1):
             segmentIndex = segmentation[y][x]
             if segmentIndex == -1:
                 continue
@@ -953,8 +953,8 @@ property list uchar float texcoord
 end_header
 """
         f.write(header)
-        for y in xrange(height):
-            for x in xrange(width):
+        for y in range(height):
+            for x in range(width):
                 segmentIndex = segmentation[y][x]
                 if segmentIndex == -1:
                     f.write("0.0 0.0 0.0\n")
@@ -969,11 +969,11 @@ end_header
 
         for face in faces:
             f.write('3 ')
-            for c in xrange(3):
+            for c in range(3):
                 f.write(str(face[c * 2 + 1] * width + face[c * 2]) + ' ')
                 continue
             f.write('6 ')
-            for c in xrange(3):
+            for c in range(3):
                 f.write(str(float(face[c * 2]) / width) + ' ' + str(1 - float(face[c * 2 + 1]) / height) + ' ')
                 continue
             f.write('\n')
@@ -990,7 +990,7 @@ def writeHTML(folder, numImages):
     h.br()
     #suffixes = ['', '_crf_1']
     #folders = ['test_all_resnet_v2' + suffix + '/' for suffix in suffixes]
-    for index in xrange(numImages):
+    for index in range(numImages):
         t = h.table(border='1')
         r_inp = t.tr()
         r_inp.td('input')
@@ -1038,7 +1038,7 @@ def writeHTMLRGBD(filename, numImages=10):
     path = ''
     folders = ['pred', 'local_02', 'local_05', 'local_07', 'local_10', 'local_12']
     second_folders = ['pred_local_02', 'pred_local_05', 'pred_local_07', 'pred_local_10', 'pred_local_12']
-    for index in xrange(numImages):
+    for index in range(numImages):
         firstFolder = path + folders[0]
         t = h.table(border='1')
         r_inp = t.tr()
@@ -1099,7 +1099,7 @@ def writeHTMLPlane(filename, numImages=10):
     h.br()
     path = ''
     folders = ['PlaneNet_hybrid', 'PlaneNet', 'GT_RANSAC', 'pixelwise_RANSAC']
-    for index in xrange(numImages):
+    for index in range(numImages):
         firstFolder = path + folders[0]
         t = h.table(border='1')
         r_inp = t.tr()
@@ -1209,9 +1209,9 @@ def fitPlanes(depth, info, numPlanes=50, planeAreaThreshold=3*4, numIterations=1
     XYZ = XYZ[depth.reshape(-1) != 0]
     planes = []
     planePointsArray = []
-    for planeIndex in xrange(numPlanes):
+    for planeIndex in range(numPlanes):
         maxNumInliers = planeAreaThreshold
-        for iteration in xrange(numIterations):
+        for iteration in range(numIterations):
             if local > 0:
                 sampledPoint = XYZ[np.random.randint(XYZ.shape[0], size=(1))]
                 sampledPoints = XYZ[np.linalg.norm(XYZ - sampledPoint, 2, 1) < local]
@@ -1305,14 +1305,14 @@ def fitPlanesSegmentation(depth, segmentation, info, numPlanes=50, numPlanesPerS
     planes = []
     planePointIndices = []
 
-    for segmentIndex in xrange(segmentation.max()):
+    for segmentIndex in range(segmentation.max()):
         segmentMask = np.logical_and(segmentation == segmentIndex, depth != 0)
         XYZ = allXYZ[segmentMask.reshape(-1)]
         if XYZ.shape[0] < planeAreaThreshold:
             continue
-        for planeIndex in xrange(numPlanesPerSegment):
+        for planeIndex in range(numPlanesPerSegment):
             maxNumInliers = planeAreaThreshold
-            for iteration in xrange(numIterations):
+            for iteration in range(numIterations):
                 if local > 0:
                     sampledPoint = XYZ[np.random.randint(XYZ.shape[0], size=(1))]
                     sampledPoints = XYZ[np.linalg.norm(XYZ - sampledPoint, 2, 1) < local]
@@ -1353,10 +1353,10 @@ def fitPlanesSegmentation(depth, segmentation, info, numPlanes=50, numPlanesPerS
         continue
 
     if len(planes) > numPlanes:
-        planeList = zip(planes, planePointIndices)
+        planeList = list(zip(planes, planePointIndices))
         planeList = sorted(planeList, key=lambda x:-len(x[1]))
         planeList = planeList[:numPlanes]
-        planes, planePointIndices = zip(*planeList)
+        planes, planePointIndices = list(zip(*planeList))
         pass
 
 
@@ -1429,8 +1429,8 @@ def fitPlanesNYU(image, depth, normal, semantics, info, numOutputPlanes=20, loca
         local = 0.2
         pass
 
-    for y in xrange(5, height, 10):
-        for x in xrange(5, width, 10):
+    for y in range(5, height, 10):
+        for x in range(5, width, 10):
             if invalidDepthMask[y][x]:
                 continue
             sampledPoint = XYZ[y * width + x]
@@ -1457,9 +1457,9 @@ def fitPlanesNYU(image, depth, normal, semantics, info, numOutputPlanes=20, loca
 
     planes = np.array(planes)
 
-    planeList = zip(planes, planeMasks)
+    planeList = list(zip(planes, planeMasks))
     planeList = sorted(planeList, key=lambda x:-x[1].sum())
-    planes, planeMasks = zip(*planeList)
+    planes, planeMasks = list(zip(*planeList))
 
 
     invalidMask = np.zeros((height, width), np.bool)
@@ -1484,11 +1484,11 @@ def fitPlanesNYU(image, depth, normal, semantics, info, numOutputPlanes=20, loca
     planeMasks = np.stack(validPlaneMasks, axis=2)
 
     cv2.imwrite('test/depth.png', drawDepthImage(depth))
-    for planeIndex in xrange(planes.shape[0]):
+    for planeIndex in range(planes.shape[0]):
         cv2.imwrite('test/mask_' + str(planeIndex) + '.png', drawMaskImage(planeMasks[:, :, planeIndex]))
         continue
 
-    print('number of planes: ' + str(planes.shape[0]))
+    print(('number of planes: ' + str(planes.shape[0])))
 
     planeSegmentation = getSegmentationsGraphCut(planes, image, depth, normal, semantics, info, parameters=parameters)
 
@@ -1503,14 +1503,14 @@ def fitPlanesNYU(image, depth, normal, semantics, info, numOutputPlanes=20, loca
 def limitPlaneNumber(planes, planeSegmentation, numOutputPlanes):
     if planes.shape[0] > numOutputPlanes:
         planeInfo = []
-        for planeIndex in xrange(planes.shape[0]):
+        for planeIndex in range(planes.shape[0]):
             mask = planeSegmentation == planeIndex
             planeInfo.append((planes[planeIndex], mask))
             continue
         planeInfo = sorted(planeInfo, key=lambda x: -x[1].sum())
         newPlanes = []
         newPlaneSegmentation = np.full(planeSegmentation.shape, numOutputPlanes)
-        for planeIndex in xrange(numOutputPlanes):
+        for planeIndex in range(numOutputPlanes):
             newPlanes.append(planeInfo[planeIndex][0])
             newPlaneSegmentation[planeInfo[planeIndex][1]] = planeIndex
             continue
@@ -1524,7 +1524,7 @@ def limitPlaneNumber(planes, planeSegmentation, numOutputPlanes):
 
 def removeSmallPlanes(planes, planeSegmentation, planeAreaThreshold):
     planeInfo = []
-    for planeIndex in xrange(planes.shape[0]):
+    for planeIndex in range(planes.shape[0]):
         mask = planeSegmentation == planeIndex
         planeInfo.append((planes[planeIndex], mask, mask.sum()))
         continue
@@ -1629,9 +1629,9 @@ def fitPlanesPoints(points, segmentation, groupSegments, numPlanes=50, numPlanes
                     pass
                 continue
 
-            for planeIndex in xrange(numPlanesPerSegment):
+            for planeIndex in range(numPlanesPerSegment):
                 maxNumInliers = 0
-                for iteration in xrange(numIterations):
+                for iteration in range(numIterations):
                     if local > 0:
                         sampledPoint = XYZ[np.random.randint(XYZ.shape[0], size=(1))]
                         sampledPoints = XYZ[np.linalg.norm(XYZ - sampledPoint, axis=1) < local]
@@ -1761,7 +1761,7 @@ def fitPlanesPoints(points, segmentation, groupSegments, numPlanes=50, numPlanes
         return np.array([]), np.ones(segmentation.shape).astype(np.int32) * (-1), []
 
     planes = np.array(planes)
-    print('number of planes: ' + str(planes.shape[0]))
+    print(('number of planes: ' + str(planes.shape[0])))
 
     # print(planes)
     # for v in planePointsArray:
@@ -1787,9 +1787,9 @@ def mergePlanes3D(points, planes, planePointIndices, planeDiffThreshold = 0.05, 
     # planes = planes / pow(planesD, 2)
     # planesDiff = (np.linalg.norm(np.expand_dims(planes, 1) - np.expand_dims(planes, 0), axis=2) < planeDiffThreshold).astype(np.int32)
 
-    planeList = zip(planes, planePointIndices)
+    planeList = list(zip(planes, planePointIndices))
     planeList = sorted(planeList, key=lambda x:-len(x[1]))
-    planes, planePointIndices = zip(*planeList)
+    planes, planePointIndices = list(zip(*planeList))
 
     groupedPlanes = []
     groupedPlanePointIndices = []
@@ -1804,7 +1804,7 @@ def mergePlanes3D(points, planes, planePointIndices, planeDiffThreshold = 0.05, 
         usedPlaneConfidence[planeIndex] = 1
         usedPlaneMap[planeIndex] = planeIndex
         XYZ = points[planePointIndices[planeIndex]]
-        for otherPlaneIndex in xrange(planeIndex + 1, numPlanes):
+        for otherPlaneIndex in range(planeIndex + 1, numPlanes):
             #if planeIndex not in [0, 1, 2, ]:
             #break
             #if usedPlanes[otherPlaneIndex]:
@@ -1825,7 +1825,7 @@ def mergePlanes3D(points, planes, planePointIndices, planeDiffThreshold = 0.05, 
             continue
         continue
 
-    for planeIndex in xrange(numPlanes):
+    for planeIndex in range(numPlanes):
         mergedPlanes = (usedPlaneMap == planeIndex).nonzero()[0].tolist()
         if len(mergedPlanes) == 0:
             continue
@@ -1861,7 +1861,7 @@ def mergePlanesBackup(points, planes, planePointIndices, planeDiffThreshold = 0.
     numPlanes = len(planes)
     planesDiff = np.diag(np.ones(numPlanes))
     for planeIndex, plane in enumerate(planes):
-        for otherPlaneIndex in xrange(planeIndex + 1, numPlanes):
+        for otherPlaneIndex in range(planeIndex + 1, numPlanes):
             otherPlane = planes[otherPlaneIndex]
             if np.abs(np.dot(plane, otherPlane)) / (np.linalg.norm(plane) * np.linalg.norm(otherPlane)) < np.cos(np.deg2rad(planeAngleThreshold)):
                 continue
@@ -1902,7 +1902,7 @@ def mergePlanesBackup(points, planes, planePointIndices, planeDiffThreshold = 0.
     #print(planesDiff)
     usedPlanes = np.zeros(planesDiff.shape[0])
     uniquePlanesDiff = []
-    for planeIndex in xrange(planesDiff.shape[0]):
+    for planeIndex in range(planesDiff.shape[0]):
         planesMask = np.maximum(planesDiff[planeIndex] - usedPlanes, 0)
         if planesMask[planeIndex] > 0:
             uniquePlanesDiff.append(planesMask)
@@ -1921,7 +1921,7 @@ def mergePlanesBackup(points, planes, planePointIndices, planeDiffThreshold = 0.
 
     groupedPlanes = []
     groupedPlanePointIndices = []
-    for groupIndex in xrange(planesDiff.shape[0]):
+    for groupIndex in range(planesDiff.shape[0]):
         if planesDiff[groupIndex].sum() == 0:
             continue
         segmentIndices = planesDiff[groupIndex].nonzero()[0]
@@ -2173,7 +2173,7 @@ def evaluatePlanePrediction(predDepths, predSegmentations, predNumPlanes, gtDept
         stride = 0.1
         planeStatistics = []
         pixelRecalls = []
-        for step in xrange(int(1.21 / stride + 1)):
+        for step in range(int(1.21 / stride + 1)):
             IOU = step * stride
             pixelRecalls.append(np.minimum((intersection * (planeIOUs >= IOU).astype(np.float32) * diffMask).sum(1), planeAreas).sum(0) / numPixels)
             planeStatistics.append((((maxIOU >= IOU)[:gtNumPlanes]).sum(), gtNumPlanes, numPredictions))
@@ -2190,7 +2190,7 @@ def evaluatePlanePrediction(predDepths, predSegmentations, predNumPlanes, gtDept
         stride = 0.05
         planeStatistics = []
         pixelRecalls = []
-        for step in xrange(int(0.61 / stride + 1)):
+        for step in range(int(0.61 / stride + 1)):
             diff = step * stride
             pixelRecalls.append(np.minimum((intersection * (planeDiffs <= diff).astype(np.float32) * IOUMask).sum(1), planeAreas).sum() / numPixels)
             planeStatistics.append((((minDiff <= diff)[:gtNumPlanes]).sum(), gtNumPlanes, numPredictions))
@@ -2432,12 +2432,12 @@ def plotCurvesSubplot(x, ysArray, filenames, xlabel='', ylabels=[], labels=[]):
 
     orderingArray = [[2, 4, 6, 0], [1, 3, 5, 0]]
 
-    for groupIndex in xrange(2):
+    for groupIndex in range(2):
         fig = plt.figure(groupIndex)
         ax = plt.gca()
 
         ordering = orderingArray[groupIndex]
-        for metricIndex in xrange(2):
+        for metricIndex in range(2):
             plt.subplot(1, 2, metricIndex + 1)
             #for index, y in enumerate(ys):
             ys = ysArray[metricIndex]
@@ -2566,7 +2566,7 @@ def refitPlanes(planes, segmentation, depth, info, numOutputPlanes=20, planeArea
     validDepthMask = depth > 1e-4
 
     newPlaneInfo = []
-    for planeIndex in xrange(numOutputPlanes):
+    for planeIndex in range(numOutputPlanes):
         mask = segmentation == planeIndex
         points = XYZ[np.logical_and(cv2.erode(mask.astype(np.float32), np.ones((3, 3))) > 0.5, validDepthMask)]
         if points.shape[0] >= 3:
@@ -2756,7 +2756,7 @@ def filterPlanes(planes, segmentations, depth, info, numOutputPlanes=20, covered
 
     #numPlanes = planes.shape[0]
     validPlaneInfo = []
-    for planeIndex in xrange(numOutputPlanes):
+    for planeIndex in range(numOutputPlanes):
         mask = segmentations[:, :, planeIndex]
         points = XYZ[np.logical_and(cv2.erode(mask, np.ones((3, 3)), 2) > 0.5, validDepthMask)]
         if points.shape[0] >= 3:
@@ -2788,7 +2788,7 @@ def filterPlanes(planes, segmentations, depth, info, numOutputPlanes=20, covered
     if False:
         for planeIndex, planeInfo in enumerate(validPlaneInfo):
             cv2.imwrite('test/mask_' + str(planeIndex) + '.png', drawMaskImage(planeInfo[1]))
-            print(planeIndex, planeInfo[0], planeInfo[3], planeInfo[1].sum())
+            print((planeIndex, planeInfo[0], planeInfo[3], planeInfo[1].sum()))
             continue
         pass
 
@@ -2894,7 +2894,7 @@ def getSegmentationsTRWS(planes, image, depth, normal, semantics, info, useSeman
 
     if useSemantics:
         planeMasks = []
-        for planeIndex in xrange(numPlanes):
+        for planeIndex in range(numPlanes):
             #print(np.bincount(semantics[segmentation == planeIndex]))
             planeMaskOri = segmentation == planeIndex
             semantic = np.bincount(semantics[planeMaskOri]).argmax()
@@ -3109,7 +3109,7 @@ def getSegmentationsGraphCut(planes, image, depth, normal, semantics, info, para
     refined_segmentation = refined_segmentation.reshape([height, width])
 
     if 'semantics' in parameters and parameters['semantics']:
-        for semanticIndex in xrange(semantics.max() + 1):
+        for semanticIndex in range(semantics.max() + 1):
             mask = semantics == semanticIndex
             segmentInds = refined_segmentation[mask]
             uniqueSegments, counts = np.unique(segmentInds, return_counts=True)
@@ -3146,7 +3146,7 @@ def calcNormal(depth, info):
         grids = np.array([-5, -3, -1, 0, 1, 3, 5])
 
     normals = []
-    for index in xrange(width * height):
+    for index in range(width * height):
         us = index % width + grids
         us = us[np.logical_and(us >= 0, us < width)]
         vs = index / width + grids
@@ -3189,7 +3189,7 @@ def readProposalInfo(info, proposals):
     proposals = proposals.reshape([-1, proposals.shape[-1]])
     proposalInfo = []
 
-    for proposal in xrange(numProposals):
+    for proposal in range(numProposals):
         proposalInfo.append(info[np.arange(info.shape[0]), proposals[:, proposal]])
         continue
     proposalInfo = np.stack(proposalInfo, axis=1).reshape(outputShape)
@@ -3330,7 +3330,7 @@ def fitPlanesManhattan(image, depth, normal, info, numOutputPlanes=20, imageInde
         return np.array([]), np.zeros(segmentation.shape).astype(np.int32)
 
     planes = np.array(planes)
-    print('number of planes ', planes.shape[0])
+    print(('number of planes ', planes.shape[0]))
 
     #transformedDominantNormals = np.matmul(info[:16].reshape(4, 4), np.transpose([np.concatenate(dominantNormals, np.ones((3, 1))], axis=1)))
     vanishingPoints = np.stack([dominantNormals[:, 0] / np.maximum(dominantNormals[:, 1], 1e-4) * info[0] + info[2], -dominantNormals[:, 2] / np.maximum(dominantNormals[:, 1], 1e-4) * info[5] + info[6]], axis=1)
@@ -3584,7 +3584,7 @@ def calcVanishingPoints(allLines, numVPs):
     lines = allLines.copy()
     VPs = []
     VPLines = []
-    for VPIndex in xrange(numVPs):
+    for VPIndex in range(numVPs):
         points = lines[:, :2]
         lengths = np.linalg.norm(lines[:, 2:4] - lines[:, :2], axis=-1)
         normals = lines[:, 2:4] - lines[:, :2]
@@ -3593,7 +3593,7 @@ def calcVanishingPoints(allLines, numVPs):
         maxNumInliers = 0
         bestVP = np.zeros(2)
         #for _ in xrange(int(np.sqrt(lines.shape[0]))):
-        for _ in xrange(min(pow(lines.shape[0], 2), 100)):
+        for _ in range(min(pow(lines.shape[0], 2), 100)):
             sampledInds = np.random.choice(lines.shape[0], 2)
             if sampledInds[0] == sampledInds[1]:
                 continue
@@ -3787,7 +3787,7 @@ def fitPlanesPiecewise(image, depth, normal, info, numOutputPlanes=20, imageInde
     unaries = unaryCost.reshape((width * height, -1))
 
 
-    print('number of planes ', planes.shape[0])
+    print(('number of planes ', planes.shape[0]))
     cv2.imwrite('test/distance_cost.png', drawSegmentationImage(-distanceCost.reshape((height, width, -1)), unaryCost.shape[-1] - 1))
 
     cv2.imwrite('test/normal_cost.png', drawSegmentationImage(-normalCost.reshape((height, width, -1)), unaryCost.shape[-1] - 1))
@@ -3846,8 +3846,8 @@ def fitPlanesPiecewise(image, depth, normal, info, numOutputPlanes=20, imageInde
     lineSets = np.zeros((height * width, 3))
     creaseLines = np.expand_dims(np.stack([planeNormals[:, 0] / info[0], planeNormals[:, 1], -planeNormals[:, 2] / info[5]], axis=1), 1) * planesD.reshape((1, -1, 1))
     creaseLines = creaseLines - np.transpose(creaseLines, [1, 0, 2])
-    for planeIndex_1 in xrange(planes.shape[0]):
-        for planeIndex_2 in xrange(planeIndex_1 + 1, planes.shape[0]):
+    for planeIndex_1 in range(planes.shape[0]):
+        for planeIndex_2 in range(planeIndex_1 + 1, planes.shape[0]):
             creaseLine = creaseLines[planeIndex_1, planeIndex_2]
             if abs(creaseLine[0]) > abs(creaseLine[2]):
                 vs = np.arange(height)
@@ -4226,7 +4226,7 @@ def findCornerPoints2D(mask):
 
     #lineImage = mask.copy()
     lineImage = np.zeros(mask.shape + (3, ))
-    print(lines.shape)
+    print((lines.shape))
     print(lines)
     for line in lines:
         cv2.line(lineImage, (int(line[0]), int(line[1])), (int(line[2]), int(line[3])), (0, 0, 255), int(np.ceil(line[4] / 2)))
@@ -4308,7 +4308,7 @@ def copyLogo(folder, index, image, depth, planes, segmentation, info):
     planeAreaThreshold = width * height / 100
 
     normals = []
-    for planeIndex in xrange(planes.shape[0]):
+    for planeIndex in range(planes.shape[0]):
         mask = segmentation == planeIndex
         if mask.sum() < planeAreaThreshold:
             continue
@@ -4351,7 +4351,7 @@ def copyLogo(folder, index, image, depth, planes, segmentation, info):
     texcoords = []
     #maskImage = np.full(segmentation.shape, planes.shape[0])
     maskImage = image.copy()
-    for planeIndex in xrange(planes.shape[0]):
+    for planeIndex in range(planes.shape[0]):
         globalMask = segmentation == planeIndex
         if globalMask.sum() < planeAreaThreshold:
             continue
@@ -4361,7 +4361,7 @@ def copyLogo(folder, index, image, depth, planes, segmentation, info):
         #print(masks.min())
         #cv2.imwrite('test/mask.png', drawSegmentationImage(masks, blackIndex=planes.shape[0]))
         #exit(1)
-        for maskIndex in xrange(masks.min() + 1, masks.max() + 1):
+        for maskIndex in range(masks.min() + 1, masks.max() + 1):
             mask = masks == maskIndex
             if mask.sum() < planeAreaThreshold:
                 continue
@@ -4418,7 +4418,7 @@ def copyLogo(folder, index, image, depth, planes, segmentation, info):
                 range_u = [-range_u[1], -range_u[0]]
                 pass
 
-            print(planeIndex, dominantNormal, direction_u, direction_v)
+            print((planeIndex, dominantNormal, direction_u, direction_v))
 
 
             length_u = range_u[1] - range_u[0]
@@ -4446,8 +4446,8 @@ def copyLogo(folder, index, image, depth, planes, segmentation, info):
             rectangleMask = np.logical_and(rectangleMask, mask)
             #maskImage[rectangleMask] = planeIndex
 
-            for y in xrange(height - 1):
-                for x in xrange(width - 1):
+            for y in range(height - 1):
+                for x in range(width - 1):
                     facePixels = []
                     for pixel in [(x, y), (x + 1, y), (x + 1, y + 1), (x, y + 1)]:
                         if rectangleMask[pixel[1]][pixel[0]]:
@@ -4519,8 +4519,8 @@ property list uchar float texcoord
 end_header
 """
         f.write(header)
-        for y in xrange(height):
-            for x in xrange(width):
+        for y in range(height):
+            for x in range(width):
                 segmentIndex = segmentation[y][x]
                 if segmentIndex == -1:
                     f.write("0.0 0.0 0.0\n")
@@ -4539,7 +4539,7 @@ end_header
 
         for faceIndex, face in enumerate(faces):
             f.write('3 ')
-            for c in xrange(3):
+            for c in range(3):
                 f.write(str(face[c * 2 + 1] * width + face[c * 2]) + ' ')
                 continue
             f.write('6 ')
@@ -4584,7 +4584,7 @@ def copyWallTexture(folder, index, image, depth, planes, segmentation, info, wal
     planeAreaThreshold = width * height / 100
 
     normals = []
-    for planeIndex in xrange(planes.shape[0]):
+    for planeIndex in range(planes.shape[0]):
         mask = segmentation == planeIndex
         if mask.sum() < planeAreaThreshold:
             continue
@@ -4628,8 +4628,8 @@ def copyWallTexture(folder, index, image, depth, planes, segmentation, info, wal
     #maskImage = np.full(segmentation.shape, planes.shape[0])
     maskImage = image.copy()
     print(wallPlanes)
-    print(textureImage.shape)
-    for planeIndex in xrange(planes.shape[0]):
+    print((textureImage.shape))
+    for planeIndex in range(planes.shape[0]):
         if planeIndex not in wallPlanes:
             continue
         globalMask = segmentation == planeIndex
@@ -4643,7 +4643,7 @@ def copyWallTexture(folder, index, image, depth, planes, segmentation, info, wal
         #print((masks == 1).sum(), planeAreaThreshold)
         #print(planeAreaThreshold)
         #exit(1)
-        for maskIndex in xrange(masks.min() + 1, masks.max() + 1):
+        for maskIndex in range(masks.min() + 1, masks.max() + 1):
             mask = masks == maskIndex
             if mask.sum() < planeAreaThreshold:
                 continue
@@ -4700,7 +4700,7 @@ def copyWallTexture(folder, index, image, depth, planes, segmentation, info, wal
                 range_u = [-range_u[1], -range_u[0]]
                 pass
 
-            print(planeIndex, dominantNormal, direction_u, direction_v)
+            print((planeIndex, dominantNormal, direction_u, direction_v))
 
 
             length_u = range_u[1] - range_u[0]
@@ -4734,8 +4734,8 @@ def copyWallTexture(folder, index, image, depth, planes, segmentation, info, wal
 
             #maskImage[rectangleMask] = planeIndex
 
-            for y in xrange(height - 1):
-                for x in xrange(width - 1):
+            for y in range(height - 1):
+                for x in range(width - 1):
                     facePixels = []
                     for pixel in [(x, y), (x + 1, y), (x + 1, y + 1), (x, y + 1)]:
                         if rectangleMask[pixel[1]][pixel[0]]:
@@ -4814,8 +4814,8 @@ property list uchar float texcoord
 end_header
 """
         f.write(header)
-        for y in xrange(height):
-            for x in xrange(width):
+        for y in range(height):
+            for x in range(width):
                 segmentIndex = segmentation[y][x]
                 if segmentIndex == -1:
                     f.write("0.0 0.0 0.0\n")
@@ -4834,7 +4834,7 @@ end_header
 
         for faceIndex, face in enumerate(faces):
             f.write('3 ')
-            for c in xrange(3):
+            for c in range(3):
                 f.write(str(face[c * 2 + 1] * width + face[c * 2]) + ' ')
                 continue
             f.write('6 ')
@@ -4880,7 +4880,7 @@ def copyLogoVideo(folder, index, image, depth, planes, segmentation, info, textu
     planeAreaThreshold = width * height / 100
 
     normals = []
-    for planeIndex in xrange(planes.shape[0]):
+    for planeIndex in range(planes.shape[0]):
         mask = segmentation == planeIndex
         if mask.sum() < planeAreaThreshold:
             continue
@@ -4946,7 +4946,7 @@ def copyLogoVideo(folder, index, image, depth, planes, segmentation, info, textu
     planeMasks = []
     planeProjections = []
     planeRanges = []
-    for planeIndex in xrange(planes.shape[0]):
+    for planeIndex in range(planes.shape[0]):
         if textureType != 'logo' and planeIndex not in wallInds:
             continue
 
@@ -4959,7 +4959,7 @@ def copyLogoVideo(folder, index, image, depth, planes, segmentation, info, textu
         #print(masks.min())
         #cv2.imwrite('test/mask.png', drawSegmentationImage(masks, blackIndex=planes.shape[0]))
         #exit(1)
-        for maskIndex in xrange(masks.min() + 1, masks.max() + 1):
+        for maskIndex in range(masks.min() + 1, masks.max() + 1):
             mask = masks == maskIndex
             if mask.sum() < planeAreaThreshold:
                 continue
@@ -5026,7 +5026,7 @@ def copyLogoVideo(folder, index, image, depth, planes, segmentation, info, textu
 
     #for frameIndex in xrange(1000):
     numFrames = 500
-    for frameIndex in xrange(numFrames):
+    for frameIndex in range(numFrames):
 
         if textureType != 'TV':
             planeRatios += randomDirection * stride
@@ -5034,7 +5034,7 @@ def copyLogoVideo(folder, index, image, depth, planes, segmentation, info, textu
             #planeDynamicRanges = np.array([[0.55, -0.33, 0, 0], [-1.45, -0.395, 0, 0], [1.2, -0.6, 0, 0]])
             planeDynamicRanges = np.array([[0.55, -0.33, 0, 0], [1.2, -0.6, 0, 0]])
             TVSize = np.array([[0.4, 0.3], [0.4, 0.3], [0.4, 0.3]])
-            for planeIndex in xrange(2):
+            for planeIndex in range(2):
                 planeDynamicRanges[planeIndex, 2:] = planeDynamicRanges[planeIndex, :2] + max(min(float(frameIndex - numFrames / 2 * planeIndex) / (numFrames / 3), 1.0), 0.0) * TVSize[planeIndex]
                 continue
             ret, textureImage = textureVideo.read()
@@ -5051,7 +5051,7 @@ def copyLogoVideo(folder, index, image, depth, planes, segmentation, info, textu
             pass
 
         resultImage = image.copy().reshape((-1, 3))
-        for planeIndex in xrange(numMasks):
+        for planeIndex in range(numMasks):
             mask = planeMasks[planeIndex]
             ranges = planeRanges[planeIndex]
             projections = planeProjections[planeIndex]
@@ -5059,7 +5059,7 @@ def copyLogoVideo(folder, index, image, depth, planes, segmentation, info, textu
 
             offsets = ranges[0] + (ranges[1] - ranges[0]) * ratios - textureSizes / 2
 
-            print(projections.max(0), projections.min(0))
+            print((projections.max(0), projections.min(0)))
             if textureType == 'TV':
                 projectionsMoved = (projections - planeDynamicRanges[planeIndex, :2]) / np.maximum(planeDynamicRanges[planeIndex, 2:] - planeDynamicRanges[planeIndex, :2], 1e-4)
             else:
@@ -5139,7 +5139,7 @@ def addCharacter(folder, index, image):
     corner_2 = [530, 470]
     characterCorner_1 = [460, 170]
     characterCorner_2 = [780, 330]
-    for i in xrange(1, 121):
+    for i in range(1, 121):
         textureImage = cv2.imread('../texture_images/Warrok1/%04d.png'%(i))
         textureImage = textureImage[characterCorner_1[1]:characterCorner_2[1], characterCorner_1[0]:characterCorner_2[0]]
         #textureImage = np.concatenate([textureImage[:, -100:], textureImage[:, 150:-100], textureImage[:, :150]], axis=1)
@@ -5152,7 +5152,7 @@ def addCharacter(folder, index, image):
         continue
 
     numFrames = 120
-    for frameIndex in xrange(numFrames):
+    for frameIndex in range(numFrames):
         textureImage = textureImages[frameIndex]
         alphaMask = alphaMasks[frameIndex]
         resultImage = image.copy()
@@ -5186,7 +5186,7 @@ def addRulerPlane(folder, index, image, depth, planes, segmentation, info, start
     planeAreaThreshold = width * height / 100
 
     normals = []
-    for planeIndex in xrange(planes.shape[0]):
+    for planeIndex in range(planes.shape[0]):
         mask = segmentation == planeIndex
         if mask.sum() < planeAreaThreshold:
             continue
@@ -5345,7 +5345,7 @@ def addRulerPlane(folder, index, image, depth, planes, segmentation, info, start
         resultImage[rectangleIndices] = resultImage[rectangleIndices] * (1 - alphas) + colors * alphas
 
         distanceOffset += np.linalg.norm(point_2 - point_1)
-        print(point_1, point_2)
+        print((point_1, point_2))
         print(direction_u)
         print(direction_v)
         cv2.imwrite('test/result.png', resultImage.reshape(image.shape))
@@ -5394,9 +5394,9 @@ def addRuler(folder, indexOffset, image, depth, planes, segmentation, info, star
     boundaryPoint = boundaryPoints[np.argmin(distances)]
 
     print(startPoint)
-    print(startPoint[0] / startPoint[1] * camera['fx'] + camera['cx'], -startPoint[2] / startPoint[1] * camera['fy'] + camera['cy'])
+    print((startPoint[0] / startPoint[1] * camera['fx'] + camera['cx'], -startPoint[2] / startPoint[1] * camera['fy'] + camera['cy']))
     print(boundaryPoint)
-    print(boundaryPoint[0] / boundaryPoint[1] * camera['fx'] + camera['cx'], -boundaryPoint[2] / boundaryPoint[1] * camera['fy'] + camera['cy'])
+    print((boundaryPoint[0] / boundaryPoint[1] * camera['fx'] + camera['cx'], -boundaryPoint[2] / boundaryPoint[1] * camera['fy'] + camera['cy']))
 
     boundaryPointNeighbors = boundaryPoints[np.linalg.norm(boundaryPoints - boundaryPoint, axis=-1) < 0.05]
     boundaryDirections = []
@@ -5499,7 +5499,7 @@ def addRuler(folder, indexOffset, image, depth, planes, segmentation, info, star
         # print(np.dot(point_1, planeNormal) - planeD, np.dot(point_2, planeNormal) - planeD)
 
 
-        for frameIndex in xrange(numFrames):
+        for frameIndex in range(numFrames):
             maxOffset = min(float(frameIndex + 1) / numFrames * totalLength, distanceOffset + np.linalg.norm(point_2 - point_1))
             minOffset = max(float(frameIndex) / numFrames * totalLength, distanceOffset)
             #print(minOffset, maxOffset)
@@ -5626,16 +5626,16 @@ def addRulerComplete(folder, indexOffset, image, depth, planes, segmentation, in
     #finalEndPoint = boundaryPoint + 0.30 * planesNormal[startPlaneIndex]
     finalEndPoint = endPoint
 
-    print('points', startPoint, boundaryPoint, endPoint)
-    print(startPoint[0] / startPoint[1] * camera['fx'] + camera['cx'], -startPoint[2] / startPoint[1] * camera['fy'] + camera['cy'])
-    print(boundaryPoint[0] / boundaryPoint[1] * camera['fx'] + camera['cx'], -boundaryPoint[2] / boundaryPoint[1] * camera['fy'] + camera['cy'])
+    print(('points', startPoint, boundaryPoint, endPoint))
+    print((startPoint[0] / startPoint[1] * camera['fx'] + camera['cx'], -startPoint[2] / startPoint[1] * camera['fy'] + camera['cy']))
+    print((boundaryPoint[0] / boundaryPoint[1] * camera['fx'] + camera['cx'], -boundaryPoint[2] / boundaryPoint[1] * camera['fy'] + camera['cy']))
     print(finalEndPoint)
-    print(finalEndPoint[0] / finalEndPoint[1] * camera['fx'] + camera['cx'], -finalEndPoint[2] / finalEndPoint[1] * camera['fy'] + camera['cy'])
+    print((finalEndPoint[0] / finalEndPoint[1] * camera['fx'] + camera['cx'], -finalEndPoint[2] / finalEndPoint[1] * camera['fy'] + camera['cy']))
 
-    print(np.dot(planesNormal[startPlaneIndex], boundaryPoint - startPoint))
-    print(startPlaneIndex, endPlaneIndex)
+    print((np.dot(planesNormal[startPlaneIndex], boundaryPoint - startPoint)))
+    print((startPlaneIndex, endPlaneIndex))
     print(planes)
-    print(planesNormal[startPlaneIndex])
+    print((planesNormal[startPlaneIndex]))
     print(planesD)
     #exit(1)
 
@@ -5646,7 +5646,7 @@ def addRulerComplete(folder, indexOffset, image, depth, planes, segmentation, in
     numAdjustFrames = 0
     addRuler(folder, 0, image, depth, planes, segmentation, info, startPoint, endPoint, boundaryPoints, startPlaneIndex=startPlaneIndex, fixedEndPoint=True, numFrames=numExtendingFrames)
 
-    for frameIndex in xrange(numAdjustFrames):
+    for frameIndex in range(numAdjustFrames):
         newEndPoint = endPoint + (finalEndPoint - endPoint) * (frameIndex + 1) / numAdjustFrames
         addRuler(folder, numExtendingFrames + frameIndex, image, depth, planes, segmentation, info, startPoint, newEndPoint, boundaryPoints, startPlaneIndex=startPlaneIndex, fixedEndPoint=True, numFrames=1)
         continue
@@ -5669,8 +5669,8 @@ def writeGridImage(image_list, width, height, gridSize):
     gapBetween = int(round(gapBetween))
     gapY = int(round(float(height - imageHeight * gridSize[1]) / (gridSize[1] + 1)))
 
-    for gridY in xrange(gridSize[1]):
-        for gridX in xrange(gridSize[0]):
+    for gridY in range(gridSize[1]):
+        for gridX in range(gridSize[0]):
             image_filename = image_list[gridY * gridSize[0] + gridX]
             image = cv2.imread(image_filename)
             image = cv2.resize(image, (imageWidth, imageHeight))
@@ -5683,7 +5683,7 @@ def writeGridImage(image_list, width, height, gridSize):
             segmentation = cv2.resize(segmentation, (imageWidth, imageHeight))
 
             offsetX = gapX * (gridX + 1) + imageWidth * gridX * 2 + gapBetween * gridX + imageWidth + gapBetween
-            print(offsetX, imageWidth)
+            print((offsetX, imageWidth))
             gridImage[offsetY:offsetY + imageHeight, offsetX:offsetX + imageWidth] = segmentation
             continue
         continue

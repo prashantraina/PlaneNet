@@ -52,12 +52,12 @@ def writeRecordFile(split, dataset):
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(sess=sess, coord=coord)
         try:
-            for _ in xrange(numImages / batchSize):
+            for _ in range(numImages / batchSize):
                 img, global_gt = sess.run([img_inp, global_gt_dict])
                 if _ % 500 == 0:
                     print(_)
                     pass
-                for batchIndex in xrange(batchSize):
+                for batchIndex in range(batchSize):
                     imagePath = global_gt['image_path'][batchIndex]
                     if '/mnt/vision/' in imagePath:
                         imagePath = imagePath.replace('/mnt/vision/', '../../Data/')

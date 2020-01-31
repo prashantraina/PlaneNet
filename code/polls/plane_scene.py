@@ -119,7 +119,7 @@ class PlaneScene():
     vp = EggVertexPool('plane_vertex')
     parent.addChild(vp)
 
-    for planeIndex in xrange(self.numPlanes):
+    for planeIndex in range(self.numPlanes):
       mask = (self.segmentation == planeIndex).astype(np.uint8) * 255
       cv2.imwrite('test/mask_' + str(planeIndex) + '.png', mask)
       contours, _ = cv2.findContours(mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
@@ -204,8 +204,8 @@ class PlaneScene():
       #cNode.node().addSolid(CollisionPolygon(polygon))
       #polygon.setCollideMask(BitMask32.bit(1))
       node = polygon.node()
-      print(node.getNumGeoms())
-      for i in xrange(node.getNumGeoms()):
+      print((node.getNumGeoms()))
+      for i in range(node.getNumGeoms()):
         geom = node.getGeom(i)
         mesh.addGeom(geom)
         continue
@@ -267,14 +267,14 @@ class PlaneScene():
     planeNormals = []    
     horizontalPlaneTriangles = []
     
-    for planeIndex in xrange(self.numPlanes):
+    for planeIndex in range(self.numPlanes):
       mask = (self.segmentation == planeIndex).astype(np.uint8) * 255
       mask_ori = mask.copy()
       #contours, _ = cv2.findContours(mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
       #contours, _ = cv2.findContours(mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_TC89_KCOS)
       masks = measure.label(mask.astype(np.int32), background=0)
       contours = []
-      for maskIndex in xrange(masks.min() + 1, masks.max() + 1):
+      for maskIndex in range(masks.min() + 1, masks.max() + 1):
         mask = masks == maskIndex
         contour_mask = mask - np.logical_and(np.logical_and(np.roll(mask, shift=1, axis=0), np.roll(mask, shift=-1, axis=0)), np.logical_and(np.roll(mask, shift=1, axis=1), np.roll(mask, shift=-1, axis=1)))
         contour_v, contour_u = contour_mask.nonzero()
@@ -333,7 +333,7 @@ class PlaneScene():
         #exit(1)
         for triangle2D in triangleList:
           triangle = []
-          for vertexIndex in xrange(3):
+          for vertexIndex in range(3):
             x = int(triangle2D[vertexIndex * 2 + 0])
             y = int(triangle2D[vertexIndex * 2 + 1])
             #print(x, y)
@@ -372,7 +372,7 @@ class PlaneScene():
     
     planeNormals = []
     planeTriangles = []
-    for planeIndex in xrange(self.numPlanes):
+    for planeIndex in range(self.numPlanes):
       mask = (self.segmentation == planeIndex).astype(np.uint8) * 255
       #mask_ori = mask.copy()
       #contours, _ = cv2.findContours(mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
@@ -443,8 +443,8 @@ class PlaneScene():
       self.gravityDirection *= -1
       pass
 
-    print(self.horizontalPlanes)
-    print(self.gravityDirection)
+    print((self.horizontalPlanes))
+    print((self.gravityDirection))
     return
     
   def getHorizontalPlanes(self):

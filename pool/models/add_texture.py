@@ -20,7 +20,7 @@ with open(sys.argv[1]) as modelFile, open(sys.argv[2], 'w') as outputFile:
             line = line[:4]
             u = max(min(int(round((1 + float(line[1])) * 0.5 * texture.shape[1])), texture.shape[1] - 1), 0)
             v = max(min(int(round((1 + float(line[2])) * 0.5 * texture.shape[0])), texture.shape[0] - 1), 0)
-            print(u, v)
+            print((u, v))
             color = texture[v][u].astype(np.float32) / 255
             line.append(str(color[2]))
             line.append(str(color[1]))

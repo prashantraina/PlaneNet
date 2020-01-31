@@ -55,10 +55,10 @@ def writeRecordFile(split, dataset):
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(sess=sess, coord=coord)
         try:
-            for _ in xrange(numImages / batchSize):
+            for _ in range(numImages / batchSize):
                 print(_)
                 img, global_gt = sess.run([img_inp, global_gt_dict])
-                for batchIndex in xrange(batchSize):
+                for batchIndex in range(batchSize):
                     image = ((img[batchIndex] + 0.5) * 255).astype(np.uint8)
                     
                     segmentation = np.argmax(np.concatenate([global_gt['segmentation'][batchIndex], global_gt['non_plane_mask'][batchIndex]], axis=-1), axis=-1).astype(np.uint8).squeeze()

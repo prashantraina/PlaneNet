@@ -27,7 +27,7 @@ class PlaneDatasetScanNet():
         #np.savetxt(dataFolder + '/image_list_' + split + '.txt', imagePaths, fmt='%s')
         #imagePaths = np.loadtxt(dataFolder + '/image_list_' + split + '.txt', fmt='%s')
 
-        print('num images', len(self.sceneImageIndices))
+        print(('num images', len(self.sceneImageIndices)))
 
         np.random.shuffle(self.sceneImageIndices)
         

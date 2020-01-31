@@ -335,10 +335,10 @@ def writeRecordFile(split):
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(sess=sess, coord=coord)
         try:
-            for _ in xrange(100000):
+            for _ in range(100000):
                 print(_)
                 images, global_p, depths, normals, global_m, boundaries, grid_s, grid_p, grid_m, num_planes, image_paths, pred_d, gt_mask = sess.run([img_inp, plane_gt, depth_gt, normal_gt, plane_mask_gt, boundary_gt, grid_s_gt, grid_p_gt, grid_m_gt, num_planes_gt, image_path_inp, depth_pred, mask_gt], feed_dict = {validating_inp:True})
-                for batchIndex in xrange(batchSize):
+                for batchIndex in range(batchSize):
                     # print(global_p[batchIndex])
                     # print(original_p[batchIndex])
                     # exit(1)

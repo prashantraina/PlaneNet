@@ -225,7 +225,7 @@ end_header
                 continue
             continue
 
-        for index in xrange(pointCloudSource.shape[0] + pointCloudTarget.shape[0] + pointCloudSource.shape[0]):
+        for index in range(pointCloudSource.shape[0] + pointCloudTarget.shape[0] + pointCloudSource.shape[0]):
             planeIndex = index * 4
             f.write('4 ' + str(planeIndex + 0) + ' ' + str(planeIndex + 1) + ' ' + str(planeIndex + 2) + ' ' + str(planeIndex + 3) + '\n')
             continue
@@ -254,7 +254,7 @@ def evaluatePlanes(planes, filename = None, depths = None, normals = None, inval
         normalFilename = filename.replace('mlt', 'norm_camera')
         normals = np.array(PIL.Image.open(normalFilename)).astype(np.float) / 255 * 2 - 1
         norm = np.linalg.norm(normals, 2, 2)
-        for c in xrange(3):
+        for c in range(3):
             normals[:, :, c] /= norm
             continue
         
@@ -399,7 +399,7 @@ def evaluatePlanesSeparately(planes, filename, outputFolder = None, outputIndex 
     height = normals.shape[0]
     width = normals.shape[1]
     norm = np.linalg.norm(normals, 2, 2)
-    for c in xrange(3):
+    for c in range(3):
         normals[:, :, c] /= norm
         continue
 
@@ -646,8 +646,8 @@ def writePLYFile(folder, index, image, depth, segmentation, boundaries):
     maxDepthDiff = 0.3
     occlusionBoundary = boundaries[:, :, 1]
         
-    for y in xrange(height - 1):
-        for x in xrange(width - 1):
+    for y in range(height - 1):
+        for x in range(width - 1):
             segmentIndex = segmentation[y][x]
             if segmentIndex == -1:
                 continue
@@ -702,8 +702,8 @@ property list uchar float texcoord
 end_header
 """
         f.write(header)
-        for y in xrange(height):
-            for x in xrange(width):
+        for y in range(height):
+            for x in range(width):
                 segmentIndex = segmentation[y][x]
                 if segmentIndex == -1:
                     f.write("0.0 0.0 0.0\n")
@@ -718,11 +718,11 @@ end_header
 
         for face in faces:
             f.write('3 ')
-            for c in xrange(3):
+            for c in range(3):
                 f.write(str(face[c * 2 + 1] * width + face[c * 2]) + ' ')
                 continue
             f.write('6 ')                     
-            for c in xrange(3):
+            for c in range(3):
                 f.write(str(float(face[c * 2]) / width) + ' ' + str(1 - float(face[c * 2 + 1]) / height) + ' ')
                 continue
             f.write('\n')
@@ -738,7 +738,7 @@ def writeHTML(folder, numImages):
     h.br()
     #suffixes = ['', '_crf_1']
     #folders = ['test_all_resnet_v2' + suffix + '/' for suffix in suffixes]
-    for index in xrange(numImages):
+    for index in range(numImages):
         t = h.table(border='1')
         r_inp = t.tr()
         r_inp.td('input')

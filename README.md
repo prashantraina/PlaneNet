@@ -1,3 +1,5 @@
+Note: install my fork of PyLSD, which fixes Python 3 compatibility: [https://github.com/prashantraina/pylsd](https://github.com/prashantraina/pylsd)
+
 # PlaneNet: Piece-wise Planar Reconstruction from a Single RGB Image
 By Chen Liu, Jimei Yang, Duygu Ceylan, Ersin Yumer, and Yasutaka Furukawa
 

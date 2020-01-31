@@ -127,7 +127,7 @@ if __name__=='__main__':
     #     imagePaths.append({'image': imagePath, 'depth': imagePath.replace('rgb', 'depth'), 'normal': imagePath.replace('images_rgb', 'surface_normals').replace('rgb', 'surface_normals'), 'plane': imagePath.replace('images_rgb', 'planes').replace('rgb', 'plane_data')})
     #     continue
         
-    print(len(imagePaths))
+    print((len(imagePaths)))
     # #exit(1)
     random.shuffle(imagePaths)
     writeRecordFile('../planes_nyu_rgbd_val.tfrecords', imagePaths)

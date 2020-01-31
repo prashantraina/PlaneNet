@@ -20,11 +20,11 @@ SOFTWARE.
 
 import numpy as np
 import tensorflow as tf
-from keras.engine.topology import Layer
+from tensorflow.keras.layers import Layer
 import os
 path = os.path.dirname(os.path.realpath(__file__))
 custom_module = tf.load_op_library(path + '/high_dim_filter.so')
-import high_dim_filter_grad  # Register gradients for the custom op
+from . import high_dim_filter_grad  # Register gradients for the custom op
 
 
 class CrfRnnLayer(Layer):
@@ -89,7 +89,7 @@ class CrfRnnLayer(Layer):
         all_ones = np.ones((c, h, w), dtype=np.float32)
 
         outputs = []
-        for batchIndex in xrange(batchSize):
+        for batchIndex in range(batchSize):
             unaries = tf.transpose(inputs[0][batchIndex, :, :, :], perm=(2, 0, 1))
             rgb = tf.transpose(inputs[1][batchIndex, :, :, :], perm=(2, 0, 1))
 

@@ -20,7 +20,7 @@ class ConvBlock(nn.Module):
         elif mode == 'deconv_3d':
             self.conv = nn.ConvTranspose3d(in_planes, out_planes, kernel_size=kernel_size, stride=stride, padding=padding, bias=False)
         else:
-            print('conv mode not supported', mode)
+            print(('conv mode not supported', mode))
             exit(1)
             pass
         if '3d' not in mode:
@@ -40,15 +40,15 @@ class PyramidModule(nn.Module):
     def __init__(self, options, in_planes, middle_planes, scales=[32, 16, 8, 4]):
         super(PyramidModule, self).__init__()
         
-        self.pool_1 = torch.nn.AvgPool2d((scales[0] * options.height / options.width, scales[0]))
-        self.pool_2 = torch.nn.AvgPool2d((scales[1] * options.height / options.width, scales[1]))        
-        self.pool_3 = torch.nn.AvgPool2d((scales[2] * options.height / options.width, scales[2]))
-        self.pool_4 = torch.nn.AvgPool2d((scales[3] * options.height / options.width, scales[3]))        
+        self.pool_1 = torch.nn.AvgPool2d((scales[0] * options.height // options.width, scales[0]))
+        self.pool_2 = torch.nn.AvgPool2d((scales[1] * options.height // options.width, scales[1]))        
+        self.pool_3 = torch.nn.AvgPool2d((scales[2] * options.height // options.width, scales[2]))
+        self.pool_4 = torch.nn.AvgPool2d((scales[3] * options.height // options.width, scales[3]))        
         self.conv_1 = ConvBlock(in_planes, middle_planes, kernel_size=1)
         self.conv_2 = ConvBlock(in_planes, middle_planes, kernel_size=1)
         self.conv_3 = ConvBlock(in_planes, middle_planes, kernel_size=1)
         self.conv_4 = ConvBlock(in_planes, middle_planes, kernel_size=1)
-        self.upsample = torch.nn.Upsample(size=(scales[0] * options.height / options.width, scales[0]), mode='bilinear')
+        self.upsample = torch.nn.Upsample(size=(scales[0] * options.height // options.width, scales[0]), mode='bilinear')
         return
     
     def forward(self, inp):
@@ -124,7 +124,7 @@ def oneHotModule(inp, depth):
 ## Warp image
 def warpImages(options, planes, images, transformations, metadata):
     planeDepths, ranges = calcPlaneDepthsModule(options.width, options.height, planes, metadata, return_ranges=True)
-    print(planeDepths.shape, ranges.shape, transformations.shape)
+    print((planeDepths.shape, ranges.shape, transformations.shape))
     exit(1)
     XYZ = planeDepths.unsqueeze(-1) * ranges.unsqueeze(-2)
     XYZ = torch.cat([XYZ, torch.ones([int(size) for size in XYZ.shape[:-1]] + [1]).cuda()], dim=-1)

@@ -117,7 +117,7 @@ class ScanNetScene():
 
         if False:
             print(planes)
-            print(depth.min(), depth.max())
+            print((depth.min(), depth.max()))
             cv2.imwrite('test/image.png', image)
             cv2.imwrite('test/depth_ori.png', drawDepthImage(depth))
             cv2.imwrite('test/segmentation.png', drawSegmentationImage(segmentation))
@@ -183,7 +183,7 @@ class ScanNetScene():
         
         segmentation = segmentation / 100 - 1
         segments, counts = np.unique(segmentation, return_counts=True)
-        segmentList = zip(segments.tolist(), counts.tolist())
+        segmentList = list(zip(segments.tolist(), counts.tolist()))
         segmentList = [segment for segment in segmentList if segment[0] not in [-1, 167771]]
         segmentList = sorted(segmentList, key=lambda x:-x[1])
         
@@ -210,12 +210,12 @@ class ScanNetScene():
 
         if False:
             print(newPlanes)
-            print(depth.min(), depth.max())
+            print((depth.min(), depth.max()))
             cv2.imwrite('test/image.png', image)
             cv2.imwrite('test/depth_ori.png', drawDepthImage(depth))
             cv2.imwrite('test/segmentation.png', drawSegmentationImage(newSegmentation))
             for index in range(newSegmentation.max() + 1):
-                print(index, newPlanes[index])
+                print((index, newPlanes[index]))
                 cv2.imwrite('test/mask_' + str(index) + '.png', (newSegmentation == index).astype(np.uint8) * 255)
                 continue
             #planeDepths = calcPlaneDepths(planes, segmentation, 192, self.metadata)

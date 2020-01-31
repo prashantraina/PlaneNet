@@ -91,7 +91,7 @@ def meanfieldModuleLayer(layerSegmentations, planeDepths, numOutputPlanes = 20, 
 
     layerDepths = []
     layerSs = []
-    for layer in xrange(numLayers):
+    for layer in range(numLayers):
         S = tf.one_hot(tf.argmax(planeSegmentations, 3), depth=numOutputPlanes)
         layerDepth = tf.reduce_sum(planeDepths * S, 3, keep_dims=True)
         layerSs.append(S)
@@ -101,7 +101,7 @@ def meanfieldModuleLayer(layerSegmentations, planeDepths, numOutputPlanes = 20, 
     conflictDs = []
     conflictDepthThreshold = 0.1
     
-    for layer in xrange(numLayers):        
+    for layer in range(numLayers):        
         DS_diff = tf.exp(-tf.pow(1 - tf.clip_by_value(tf.abs(planeDepths - layerDepths[layer]), 0, 1), 2) / sigmaDepthDiff) - tf.exp(-1 / sigmaDepthDiff) * layerSs[layer]
         DS = tf.nn.depthwise_conv2d(DS_diff, tf.tile(neighbor_kernel, [1, 1, numOutputPlanes, 1]), strides=[1, 1, 1, 1], padding='SAME')
         DSs.append(DS)
@@ -179,7 +179,7 @@ def segmentationRefinementModule(planeSegmentations, planeDepths, numOutputPlane
     sigmaDepthDiff = 0.5
 
     refined_segmentation = planeSegmentations
-    for _ in xrange(numIterations):
+    for _ in range(numIterations):
         refined_segmentation = meanfieldModule(refined_segmentation, planeDepths, numOutputPlanes=numOutputPlanes, sigmaDepthDiff=sigmaDepthDiff)
         continue
     return refined_segmentation
@@ -233,7 +233,7 @@ def segmentationRefinementModuleBoundary(planeSegmentations, planeDepths, occlus
 
     #occlusionBoundary = tf.slice(boundaries, [0, 0, 0, 1], [boundaries.shape[0], boundaries.shape[1], boundaries.shape[2], 1])
     #smoothBoundary = tf.slice(boundaries, [0, 0, 0, 2], [boundaries.shape[0], boundaries.shape[1], boundaries.shape[2], 1])
-    for _ in xrange(numIterations):
+    for _ in range(numIterations):
         refined_segmentation = meanfieldModuleBoundary(refined_segmentation, planeSegmentations, planeDepths, occlusionBoundary=occlusionBoundary, smoothBoundary=smoothBoundary, numOutputPlanes=numOutputPlanes, sigmaDepthDiff=sigmaDepthDiff)
         continue
     return refined_segmentation
@@ -271,7 +271,7 @@ def planeFittingModule(depth, normal, numPlanes=50, numGlobalPlanes=20, planeAre
     neighbor_kernel = tf.reshape(neighbor_kernel, [kernel_size, kernel_size, 1, 1])
     #smoothedPlaneMap = tf.nn.depthwise_conv2d(planeMap, tf.tile(neighbor_kernel, [1, 1, 3, 1]), strides=[1, 1, 1, 1], padding='SAME')
     median_kernel_array = np.zeros((3, 3, 1, 9))
-    for index in xrange(9):
+    for index in range(9):
         median_kernel_array[index / 3, index % 3, 0, index] = 1
         continue
     median_kernel = tf.constant(median_kernel_array.reshape(-1), shape=median_kernel_array.shape, dtype=tf.float32)
@@ -293,7 +293,7 @@ def planeFittingModule(depth, normal, numPlanes=50, numGlobalPlanes=20, planeAre
     assignment = tf.reshape(tf.range(batchSize * height * width, dtype=tf.float32) + 1, [batchSize, height, width, 1]) * boundaryMask
     with tf.variable_scope("flooding") as scope:
         scope.reuse_variables()
-        for _ in xrange(width / 2):
+        for _ in range(width / 2):
             assignment = tf.nn.max_pool(assignment, ksize=[1, 5, 5, 1], strides=[1, 1, 1, 1], padding='SAME', name='max_pool') * boundaryMask
             continue
         pass
@@ -358,7 +358,7 @@ def planeFittingModule(depth, normal, numPlanes=50, numGlobalPlanes=20, planeAre
 
     with tf.variable_scope("expansion") as scope:
         scope.reuse_variables()
-        for _ in xrange(width / 6):
+        for _ in range(width / 6):
             planeMasks = tf.nn.max_pool(planeMasks, ksize=[1, 13, 13, 1], strides=[1, 1, 1, 1], padding='SAME', name='max_pool') * explainedPlaneMasks
             continue
         pass
@@ -531,11 +531,11 @@ def planeFittingModule(depth, normal, numPlanes=50, numGlobalPlanes=20, planeAre
     maskWidth = 32
     maskHeight = 32
     planeCroppedMasks = []
-    for batchIndex in xrange(batchSize):
+    for batchIndex in range(batchSize):
         boxes = planeBoxes[batchIndex]
         masks = tf.transpose(planeMasks[batchIndex], [2, 0, 1])
         croppedMasks = []
-        for planeIndex in xrange(numPlanes):
+        for planeIndex in range(numPlanes):
         #for planeIndex in xrange(1):
             box = boxes[planeIndex]
             mask = masks[planeIndex]
@@ -780,8 +780,8 @@ def findLocalPlanes(planes, planeMasks):
     paddedPlaneMasks = tf.concat([tf.zeros([batchSize, padding, width + padding * 2, numPlanes]), paddedPlaneMasks, tf.zeros([batchSize, padding, width + padding * 2, numPlanes])], axis=1)
 
     gridPlaneMasks = []
-    for gridY in xrange(height / stride):
-        for gridX in xrange(width / stride):
+    for gridY in range(height / stride):
+        for gridX in range(width / stride):
             localPlaneMasks = tf.slice(paddedPlaneMasks, [0, gridY * stride + stride / 2 - boxSize / 2 + padding, gridX * stride + stride / 2 - boxSize / 2 + padding, 0], [batchSize, boxSize, boxSize, numPlanes])
             gridPlaneMasks.append(tf.image.resize_bilinear(localPlaneMasks, [maskHeight, maskWidth]))
             continue

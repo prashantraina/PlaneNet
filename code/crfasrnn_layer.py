@@ -87,7 +87,7 @@ class CrfRnnLayer(Layer):
         all_ones = np.ones((c, h, w), dtype=np.float32)
 
         outputs = []
-        for batchIndex in xrange(batchSize):
+        for batchIndex in range(batchSize):
             unaries = tf.transpose(inputs[0][batchIndex, :, :, :], perm=(2, 0, 1))
             rgb = tf.transpose(inputs[1][batchIndex, :, :, :], perm=(2, 0, 1))
 

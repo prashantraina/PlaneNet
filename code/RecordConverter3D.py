@@ -75,10 +75,10 @@ def writeRecordFile(split, dataset):
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(sess=sess, coord=coord)
         try:
-            for _ in xrange(numImages / batchSize):
+            for _ in range(numImages / batchSize):
                 print(_)
                 img, global_gt = sess.run([img_inp, global_gt_dict])
-                for batchIndex in xrange(batchSize):
+                for batchIndex in range(batchSize):
                     image = ((img[batchIndex] + 0.5) * 255).astype(np.uint8)
                     segmentation = global_gt['segmentation'][batchIndex].astype(np.uint8).squeeze()
                     boundary = global_gt['boundary'][batchIndex].astype(np.uint8)

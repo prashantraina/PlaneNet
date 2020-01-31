@@ -24,7 +24,7 @@ class PlaneStatistics:
   def addPlaneInfo(self, normalFilename, maskFilename, depthFilename):
     normals = np.array(PIL.Image.open(normalFilename)).astype(np.float) / 255 * 2 - 1
     norm = np.linalg.norm(normals, 2, 2)
-    for c in xrange(3):
+    for c in range(3):
       normals[:, :, c] /= norm
       continue
     
@@ -126,7 +126,7 @@ class PlaneStatistics:
       self.planeParametersArray = np.array(self.planeParametersArray)
       planeNormals = copy.deepcopy(self.planeParametersArray)
       planeD = np.linalg.norm(planeNormals, 2, 1)
-      for c in xrange(3):
+      for c in range(3):
         planeNormals[:, c] /= planeD
         continue
       
@@ -137,7 +137,7 @@ class PlaneStatistics:
 
       XYZ = np.array([X, Y, Z])
       planeXYZ = np.zeros(XYZ.shape)
-      for i in xrange(self.planeParametersArray.shape[0]):
+      for i in range(self.planeParametersArray.shape[0]):
 
         mask = planes[i][1]
         planeY = normalXYZ[:, :, i] * planeD[i]
@@ -149,7 +149,7 @@ class PlaneStatistics:
         planeXYZ[2][mask] = planeZ[mask]
         continue
 
-      for c in xrange(3):
+      for c in range(3):
         inputImage = XYZ[c]
         cMin = inputImage.min()
         cMax = inputImage.max()
@@ -162,7 +162,7 @@ class PlaneStatistics:
       planeImage = np.zeros((self.height, self.width, 3))
       for plane in planes:
         mask = plane[1]
-        for c in xrange(3):
+        for c in range(3):
           planeImage[:, :, c][mask] = random.randint(0, 255)
           #planeImage[:, :, c][mask] = max(min(round((plane[0][c] + 1) / 2 * 255), 255), 0)
           continue
@@ -178,7 +178,7 @@ class PlaneStatistics:
     width = self.width
     
     norm = np.linalg.norm(normals, 2, 2)
-    for c in xrange(3):
+    for c in range(3):
       normals[:, :, c] /= norm
       continue
 
@@ -234,7 +234,7 @@ class PlaneStatistics:
 
     residualPlanes = []
     segmentationImage = np.zeros((self.height, self.width, 3))
-    for clusterIndex in xrange(self.numClusters):
+    for clusterIndex in range(self.numClusters):
       mask = segmentation == clusterIndex
       mask = ndimage.binary_erosion(mask).astype(mask.dtype)
       if mask.sum() < self.planeAreaThreshold:
@@ -262,7 +262,7 @@ class PlaneStatistics:
     
     normals = np.array(PIL.Image.open(normalFilename)).astype(np.float) / 255 * 2 - 1
     norm = np.linalg.norm(normals, 2, 2)
-    for c in xrange(3):
+    for c in range(3):
       normals[:, :, c] /= norm
       continue
     
@@ -338,7 +338,7 @@ class PlaneStatistics:
       planeImage = np.zeros((self.height, self.width, 3))
       for plane in planes:
         mask = plane[1]
-        for c in xrange(3):
+        for c in range(3):
           planeImage[:, :, c][mask] = random.randint(0, 255)
           #planeImage[:, :, c][mask] = max(min(round((plane[0][c] + 1) / 2 * 255), 255), 0)
           continue
@@ -369,7 +369,7 @@ class PlaneStatistics:
           residualPlaneMap[planeIndex] = (diff[planeIndex].tolist(), planeArea)
           pass
         continue
-      for planeIndex, residualPlane in residualPlaneMap.items():
+      for planeIndex, residualPlane in list(residualPlaneMap.items()):
         residualPlanes.append([planeIndex, ] + residualPlane[0])
         continue
       pass
@@ -377,7 +377,7 @@ class PlaneStatistics:
       for plane in planes:
         planeParameters = np.array(plane[0])
         mask = plane[1]
-        for cell in xrange(self.width * self.width / (self.stride * self.stride)):
+        for cell in range(self.width * self.width / (self.stride * self.stride)):
           gridX = int(cell) % (self.width / self.stride)
           gridY = int(cell) / (self.width / self.stride)
           intersection = mask[gridY * self.stride:(gridY + 1) * self.stride, gridX * self.stride:(gridX + 1) * self.stride].sum()
@@ -413,7 +413,7 @@ class PlaneStatistics:
       planeParametersArray = np.array(planeParametersArray)
       planeNormals = copy.deepcopy(planeParametersArray)
       planeD = np.linalg.norm(planeNormals, 2, 1)
-      for c in xrange(3):
+      for c in range(3):
         planeNormals[:, c] /= planeD
         continue
       
@@ -424,7 +424,7 @@ class PlaneStatistics:
 
       XYZ = np.array([X, Y, Z])
       planeXYZ = np.zeros(XYZ.shape)
-      for i in xrange(planeParametersArray.shape[0]):
+      for i in range(planeParametersArray.shape[0]):
 
         mask = planes[i][1]
         planeY = normalXYZ[:, :, i] * planeD[i]
@@ -436,7 +436,7 @@ class PlaneStatistics:
         planeXYZ[2][mask] = planeZ[mask]
         continue
 
-      for c in xrange(3):
+      for c in range(3):
         inputImage = XYZ[c]
         cMin = inputImage.min()
         cMax = inputImage.max()
@@ -449,7 +449,7 @@ class PlaneStatistics:
       planeImage = np.zeros((self.height, self.width, 3))
       for plane in planes:
         mask = plane[1]
-        for c in xrange(3):
+        for c in range(3):
           planeImage[:, :, c][mask] = random.randint(0, 255)
           #planeImage[:, :, c][mask] = max(min(round((plane[0][c] + 1) / 2 * 255), 255), 0)
           continue
@@ -463,7 +463,7 @@ class PlaneStatistics:
   def evaluatePredefinedPlanes(self, normalFilename, maskFilename, depthFilename):
     normals = np.array(PIL.Image.open(normalFilename)).astype(np.float) / 255 * 2 - 1
     norm = np.linalg.norm(normals, 2, 2)
-    for c in xrange(3):
+    for c in range(3):
       normals[:, :, c] /= norm
       continue
     
@@ -490,11 +490,11 @@ class PlaneStatistics:
 
     diff = inputParameters - self.predefinedPlanesImage
     diff = pow(diff, 2)
-    for c in xrange(diff.shape[0]):
+    for c in range(diff.shape[0]):
       diff[c][invalidMask] = 0
       continue
 
-    for c in xrange(diff.shape[0]):
+    for c in range(diff.shape[0]):
       self.residualImages[c] += diff[c].min(2)
       continue
     self.residualImages[3] += np.linalg.norm(diff, 2, 0).min(2)
@@ -504,7 +504,7 @@ class PlaneStatistics:
     if True:
       PIL.Image.fromarray((invalidMask * 255).astype(np.uint8)).save('test/mask.png')
       XYZ = np.array([X, Y, Z])
-      for c in xrange(3):
+      for c in range(3):
         inputImage = XYZ[c]
         cMin = inputImage.min()
         cMax = inputImage.max()
@@ -513,7 +513,7 @@ class PlaneStatistics:
         reconstructed = np.zeros(inputImage.shape)
         diffImage = np.ones(inputImage.shape) * 10000
         segmentation = np.zeros((self.height, self.width, 3)).astype(np.uint8)
-        for clusterIndex in xrange(self.numClusters):
+        for clusterIndex in range(self.numClusters):
           planeImage = self.predefinedPlanesImage[c, :, :, clusterIndex]
           mask = np.abs(planeImage - inputImage) < diffImage
           reconstructed[mask] = planeImage[mask]
@@ -527,7 +527,7 @@ class PlaneStatistics:
 
       #assignment = np.argmin(diff.sum(0), 2).reshape(-1)
 
-      for c in xrange(3):
+      for c in range(3):
         assignment = np.argmin(diff[c], 2)
         cMin = XYZ[c].min()
         cMax = XYZ[c].max()
@@ -536,7 +536,7 @@ class PlaneStatistics:
         #cImage = self.predefinedPlanesImage[c][assignment]
         reconstructed = np.zeros(XYZ[c].shape)
         segmentation = np.zeros((self.height, self.width, 3)).astype(np.uint8)
-        for clusterIndex in xrange(self.numClusters):
+        for clusterIndex in range(self.numClusters):
           mask = assignment == clusterIndex
           reconstructed[mask] = planesImage[:, :, clusterIndex][mask]
           segmentation[mask] = (np.random.rand(3) * 255).astype(np.uint8)
@@ -568,7 +568,7 @@ class PlaneStatistics:
     self.planeParametersArray = np.load(folder + '/plane_parameters.npy')
 
     if self.planeParametersArray.shape[1] == 4:
-      for c in xrange(3):
+      for c in range(3):
         self.planeParametersArray[:, c] *= -self.planeParametersArray[:, 3]
         continue
       self.planeParametersArray = self.planeParametersArray[:, :3]
@@ -606,7 +606,7 @@ class PlaneStatistics:
   def startEvaluatingPredefinedPlanes(self):
     normals = copy.deepcopy(self.predefinedPlanes)
     d = np.linalg.norm(normals, 2, 1)
-    for c in xrange(3):
+    for c in range(3):
       normals[:, c] /= d
       continue
     #normals *= -1
@@ -621,7 +621,7 @@ class PlaneStatistics:
     X = np.zeros(Y.shape)
     Z = np.zeros(Y.shape)
     
-    for i in xrange(self.numClusters):
+    for i in range(self.numClusters):
       clusterY = Y[:, :, i] * d[i]
       Y[:, :, i] = clusterY
       X[:, :, i] = clusterY * urange / focalLength
@@ -675,7 +675,7 @@ class PlaneStatistics:
     
     normals = np.array(PIL.Image.open(normalFilename)).astype(np.float) / 255 * 2 - 1
     norm = np.linalg.norm(normals, 2, 2)
-    for c in xrange(3):
+    for c in range(3):
       normals[:, :, c] /= norm
       continue
     
@@ -716,14 +716,14 @@ class PlaneStatistics:
       planeZ = -planeY * vrange / focalLength
       
       planeXYZ = [planeX, planeY, planeZ]
-      for c in xrange(3):
+      for c in range(3):
         mask = np.abs(planeXYZ[c] - XYZ[c]) < diffImage[c]
         planesXYZ[c][mask] = planeXYZ[c][mask]
         diffImage[c][mask] = np.abs(planeXYZ[c] - XYZ[c])[mask]
         continue
       continue
     
-    for c in xrange(3):
+    for c in range(3):
       inputImage = XYZ[c]
       cMin = inputImage.min()
       cMax = inputImage.max()
@@ -741,7 +741,7 @@ def evaluatePlanes(planes, filename, outputFolder = None):
   height = normals.shape[0]
   width = normals.shape[1]
   norm = np.linalg.norm(normals, 2, 2)
-  for c in xrange(3):
+  for c in range(3):
     normals[:, :, c] /= norm
     continue
 
@@ -801,7 +801,7 @@ def evaluatePlanes(planes, filename, outputFolder = None):
     # exit(1)
     #pass
     if planeIndex in [1, 4]:
-      print(planeY[113][251])
+      print((planeY[113][251]))
       continue
     mask = pow(planeY - Y, 2) < diffDepths
     reconstructedDepths[mask] = planeY[mask]

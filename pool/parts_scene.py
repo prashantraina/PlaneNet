@@ -112,8 +112,8 @@ class PartsScene():
     self.planeNPs = []
     self.planeCenters = []
 
-    print(self.numPlanes)
-    for planeIndex in xrange(self.numPlanes):
+    print((self.numPlanes))
+    for planeIndex in range(self.numPlanes):
       mask = (self.segmentation == planeIndex).astype(np.uint8) * 255
       #cv2.imwrite('test/mask_' + str(planeIndex) + '.png', mask)
       contours, _ = cv2.findContours(mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
@@ -212,8 +212,8 @@ class PartsScene():
       #cNode.node().addSolid(CollisionPolygon(polygon))
       #polygon.setCollideMask(BitMask32.bit(1))
       node = polygon.node()
-      print(node.getNumGeoms())
-      for i in xrange(node.getNumGeoms()):
+      print((node.getNumGeoms()))
+      for i in range(node.getNumGeoms()):
         geom = node.getGeom(i)
         mesh.addGeom(geom)
         continue

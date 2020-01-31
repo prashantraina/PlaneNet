@@ -94,11 +94,11 @@ def writeRecordFile(split, dataset):
         threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
         try:
-            for _ in xrange(numImages / batchSize):
+            for _ in range(numImages / batchSize):
                 img, global_gt = sess.run([img_inp, global_gt_dict])
 
                 print(_)                
-                for batchIndex in xrange(batchSize):
+                for batchIndex in range(batchSize):
                     numPlanes = global_gt['num_planes'][batchIndex]
                     if numPlanes == 0:
                         print(_)
@@ -115,7 +115,7 @@ def writeRecordFile(split, dataset):
 
                     planes = global_gt['plane'][batchIndex]
                     if np.isnan(planes).any():
-                        print(global_gt['image_path'][batchIndex])
+                        print((global_gt['image_path'][batchIndex]))
                         planes, segmentation, numPlanes = removeSmallSegments(planes, np.zeros((HEIGHT, WIDTH, 3)), global_gt['depth'][batchIndex].squeeze(), np.zeros((HEIGHT, WIDTH, 3)), np.argmax(global_gt['segmentation'][batchIndex], axis=-1), global_gt['semantics'][batchIndex], global_gt['info'][batchIndex], global_gt['num_planes'][batchIndex])
                         if np.isnan(planes).any():
                             np.save('temp/plane.npy', global_gt['plane'][batchIndex])                        

@@ -74,7 +74,7 @@ def findCornerPoints(plane, depth, mask, axis=2, rectangle=True):
 
 def copyTextureTest(options):
     testdir = 'texture_test/'
-    for index in xrange(1):
+    for index in range(1):
         planes = np.load(testdir + '/planes_' + str(index) + '.npy')
         image = cv2.imread(testdir + '/image_' + str(index) + '.png')
         segmentations = np.load(testdir + '/segmentations_' + str(index) + '.npy')
@@ -112,7 +112,7 @@ def copyTexture(options):
 
     texture_image_names = glob.glob('../textures/*.png') + glob.glob('../textures/*.jpg')
     
-    for image_index in xrange(options.numImages):
+    for image_index in range(options.numImages):
         planes = pred_dict['plane'][image_index]
         segmentation = pred_dict['segmentation'][image_index]
         image = pred_dict['image'][image_index]
@@ -203,7 +203,7 @@ def getResults(options):
         pass
         
     options.checkpoint_dir = checkpoint_prefix + method[0]
-    print(options.checkpoint_dir)
+    print((options.checkpoint_dir))
     
     options.suffix = method[1]
 
@@ -307,7 +307,7 @@ def getResults(options):
             pred_np_d = np.expand_dims(cv2.resize(pred_np_d.squeeze(), (width_high_res, height_high_res)), -1)
             all_depths = np.concatenate([plane_depths, pred_np_d], axis=2)
 
-            all_segmentations = np.stack([cv2.resize(all_segmentations[:, :, planeIndex], (width_high_res, height_high_res)) for planeIndex in xrange(all_segmentations.shape[-1])], axis=2)
+            all_segmentations = np.stack([cv2.resize(all_segmentations[:, :, planeIndex], (width_high_res, height_high_res)) for planeIndex in range(all_segmentations.shape[-1])], axis=2)
                 
             segmentation = np.argmax(all_segmentations, 2)
             pred_d = all_depths.reshape(-1, options.numOutputPlanes + 1)[np.arange(height_high_res * width_high_res), segmentation.reshape(-1)].reshape(height_high_res, width_high_res)

@@ -92,7 +92,7 @@ def meanfieldModuleLayer(layerSegmentations, planeDepths, numOutputPlanes = 20, 
 
     layerDepths = []
     layerSs = []
-    for layer in xrange(numLayers):
+    for layer in range(numLayers):
         S = tf.one_hot(tf.argmax(planeSegmentations, 3), depth=numOutputPlanes)
         layerDepth = tf.reduce_sum(planeDepths * S, 3, keep_dims=True)
         layerSs.append(S)
@@ -102,7 +102,7 @@ def meanfieldModuleLayer(layerSegmentations, planeDepths, numOutputPlanes = 20, 
     conflictDs = []
     conflictDepthThreshold = 0.1
     
-    for layer in xrange(numLayers):        
+    for layer in range(numLayers):        
         DS_diff = tf.exp(-tf.pow(1 - tf.clip_by_value(tf.abs(planeDepths - layerDepths[layer]), 0, 1), 2) / sigmaDepthDiff) - tf.exp(-1 / sigmaDepthDiff) * layerSs[layer]
         DS = tf.nn.depthwise_conv2d(DS_diff, tf.tile(neighbor_kernel, [1, 1, numOutputPlanes, 1]), strides=[1, 1, 1, 1], padding='SAME')
         DSs.append(DS)
@@ -217,7 +217,7 @@ def segmentationRefinementModule(planeSegmentations, planeDepths, planesY, image
     
     
     refined_segmentation = planeSegmentations
-    for _ in xrange(numIterations):
+    for _ in range(numIterations):
         refined_segmentation, _ = meanfieldModule(refined_segmentation, planeDepths, planesY, imageDiff, numOutputPlanes=numOutputPlanes, maxDepthDiff=maxDepthDiff, varDepthDiff=varDepthDiff, kernel_size = kernel_size)
         continue
     return refined_segmentation, {}
@@ -271,7 +271,7 @@ def segmentationRefinementModuleBoundary(planeSegmentations, planeDepths, occlus
 
     #occlusionBoundary = tf.slice(boundaries, [0, 0, 0, 1], [boundaries.shape[0], boundaries.shape[1], boundaries.shape[2], 1])
     #smoothBoundary = tf.slice(boundaries, [0, 0, 0, 2], [boundaries.shape[0], boundaries.shape[1], boundaries.shape[2], 1])
-    for _ in xrange(numIterations):
+    for _ in range(numIterations):
         refined_segmentation = meanfieldModuleBoundary(refined_segmentation, planeSegmentations, planeDepths, occlusionBoundary=occlusionBoundary, smoothBoundary=smoothBoundary, numOutputPlanes=numOutputPlanes, sigmaDepthDiff=sigmaDepthDiff)
         continue
     return refined_segmentation
@@ -818,8 +818,8 @@ def findLocalPlanes(planes, planeMasks):
     paddedPlaneMasks = tf.concat([tf.zeros([batchSize, padding, width + padding * 2, numPlanes]), paddedPlaneMasks, tf.zeros([batchSize, padding, width + padding * 2, numPlanes])], axis=1)
 
     gridPlaneMasks = []
-    for gridY in xrange(height / stride):
-        for gridX in xrange(width / stride):
+    for gridY in range(height / stride):
+        for gridX in range(width / stride):
             localPlaneMasks = tf.slice(paddedPlaneMasks, [0, gridY * stride + stride / 2 - boxSize / 2 + padding, gridX * stride + stride / 2 - boxSize / 2 + padding, 0], [batchSize, boxSize, boxSize, numPlanes])
             gridPlaneMasks.append(tf.image.resize_bilinear(localPlaneMasks, [maskHeight, maskWidth]))
             continue
@@ -1063,7 +1063,7 @@ def crfModule(segmentations, planes, non_plane_depth, info, numOutputPlanes=20, 
     all_depths = tf.concat([plane_depths, non_plane_depth], axis=3)
     
     refined_segmentation = segmentations
-    for _ in xrange(numIterations):
+    for _ in range(numIterations):
         refined_segmentation = meanfieldModule(refined_segmentation, all_depths, numOutputPlanes=numOutputPlanes + 1, sigmaDepthDiff=sigmaDepthDiff, kernel_size = kernel_size)
         continue
     return refined_segmentation
@@ -1157,7 +1157,7 @@ def crfrnnModule(inputs, image_dims, num_classes, theta_alpha, theta_beta, theta
     all_ones = np.ones((c, h, w), dtype=np.float32)
 
     outputs = []
-    for batchIndex in xrange(batchSize):
+    for batchIndex in range(batchSize):
         unaries = tf.transpose(inputs[0][batchIndex, :, :, :], perm=(2, 0, 1))
         rgb = tf.transpose(inputs[1][batchIndex, :, :, :], perm=(2, 0, 1))
 

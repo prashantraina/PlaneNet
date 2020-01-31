@@ -146,7 +146,7 @@ def mergePlanesNew(points, planes, planePointIndices, planeSegments, segmentNeig
         planeFittingErrors.append(diff.mean())
         continue
     
-    planeList = zip(planes, planePointIndices, planeSegments, planeFittingErrors)
+    planeList = list(zip(planes, planePointIndices, planeSegments, planeFittingErrors))
     planeList = sorted(planeList, key=lambda x:x[3])
 
     ## Merge two planes if they are neighbors and the merged plane has small fitting error
@@ -156,7 +156,7 @@ def mergePlanesNew(points, planes, planePointIndices, planeSegments, segmentNeig
 
         if debug:
             for index, planeInfo in enumerate(sorted(planeList, key=lambda x:-len(x[1]))):
-                print(index, planeInfo[0] / np.linalg.norm(planeInfo[0]), planeInfo[2], planeInfo[3])
+                print((index, planeInfo[0] / np.linalg.norm(planeInfo[0]), planeInfo[2], planeInfo[3]))
                 continue
             pass
         
@@ -190,7 +190,7 @@ def mergePlanesNew(points, planes, planePointIndices, planeSegments, segmentNeig
                 diff = np.abs(np.matmul(XYZ, newPlane) - np.ones(XYZ.shape[0])) / np.linalg.norm(newPlane)
                 newFittingError = diff.mean()
                 if debug:
-                    print(len(planeList), planeIndex, neighborPlaneIndex, newFittingError, plane / np.linalg.norm(plane), neighborPlane[0] / np.linalg.norm(neighborPlane[0]), dotProduct, orthogonalThreshold)
+                    print((len(planeList), planeIndex, neighborPlaneIndex, newFittingError, plane / np.linalg.norm(plane), neighborPlane[0] / np.linalg.norm(neighborPlane[0]), dotProduct, orthogonalThreshold))
                     pass
                 if dotProduct < orthogonalThreshold:
                     continue                
@@ -232,12 +232,12 @@ def mergePlanesNew(points, planes, planePointIndices, planeSegments, segmentNeig
             pass
     elif len(planeList) > maxNumPlanes:
         if debug:
-            print('too many planes', len(planeList), maxNumPlanes)
+            print(('too many planes', len(planeList), maxNumPlanes))
             pass
         planeList = planeList[:maxNumPlanes]
         pass
     
-    groupedPlanes, groupedPlanePointIndices, groupedPlaneSegments, groupedPlaneFittingErrors = zip(*planeList)
+    groupedPlanes, groupedPlanePointIndices, groupedPlaneSegments, groupedPlaneFittingErrors = list(zip(*planeList))
     groupNeighbors = []
     for planeIndex, planeSegments in enumerate(groupedPlaneSegments):
         neighborSegments = []
@@ -267,10 +267,10 @@ def mergePlanesNew(points, planes, planePointIndices, planeSegments, segmentNeig
         continue
 
     if debug and len(groupedPlanes) > 1:
-        print('merging result', [len(pointIndices) for pointIndices in groupedPlanePointIndices], groupedPlaneFittingErrors, groupNeighbors)
+        print(('merging result', [len(pointIndices) for pointIndices in groupedPlanePointIndices], groupedPlaneFittingErrors, groupNeighbors))
         pass
     
-    planeList = zip(groupedPlanes, groupedPlanePointIndices, groupNeighbors)
+    planeList = list(zip(groupedPlanes, groupedPlanePointIndices, groupNeighbors))
     return planeList
 
 
@@ -307,7 +307,7 @@ def readMesh(scene_id):
 
     groupSegments = []
     groupLabels = []
-    for segmentIndex in xrange(len(aggregation)):
+    for segmentIndex in range(len(aggregation)):
         groupSegments.append(aggregation[segmentIndex]['segments'])
         groupLabels.append(aggregation[segmentIndex]['label'])
         continue
@@ -336,7 +336,7 @@ def readMesh(scene_id):
 
     ## Segment connections for plane merging later
     segmentEdges = []
-    for faceIndex in xrange(faces.shape[0]):
+    for faceIndex in range(faces.shape[0]):
         face = faces[faceIndex]
         segment_1 = segmentation[face[0]]
         segment_2 = segmentation[face[1]]
@@ -433,7 +433,7 @@ def readMesh(scene_id):
         continue
 
     planeGroups = []
-    print('num groups', len(groupSegments))
+    print(('num groups', len(groupSegments)))
 
     debug = False    
     debugIndex = -1
@@ -551,7 +551,7 @@ def readMesh(scene_id):
             pass
 
         if debug:
-            print('group', groupIndex, groupLabels[groupIndex], groupLabel, len(groupPlanes))
+            print(('group', groupIndex, groupLabels[groupIndex], groupLabel, len(groupPlanes)))
             pass
         
         planeGroups.append(groupPlanes)
@@ -582,7 +582,7 @@ def readMesh(scene_id):
         writePointCloudFace(annotationFolder + '/segments.ply', np.concatenate([points, colors], axis=-1), faces)
 
         groupedSegmentation = np.full(segmentation.shape, fill_value=-1)
-        for segmentIndex in xrange(len(aggregation)):
+        for segmentIndex in range(len(aggregation)):
             indices = aggregation[segmentIndex]['segments']
             for index in indices:
                 groupedSegmentation[segmentation == index] = segmentIndex
@@ -597,7 +597,7 @@ def readMesh(scene_id):
     planes = []
     planePointIndices = []
     for index, group in enumerate(planeGroups):
-        groupPlanes, groupPlanePointIndices, groupNeighbors = zip(*group)
+        groupPlanes, groupPlanePointIndices, groupNeighbors = list(zip(*group))
 
         planes += groupPlanes
         planePointIndices += groupPlanePointIndices
@@ -638,13 +638,13 @@ def readMesh(scene_id):
 
 
     planes = np.array(planes)
-    print('number of planes: ', planes.shape[0])    
+    print(('number of planes: ', planes.shape[0]))    
     planesD = 1.0 / np.maximum(np.linalg.norm(planes, axis=-1, keepdims=True), 1e-4)
     planes *= pow(planesD, 2)
 
     ## Remove boundary faces for rendering purpose
     removeIndices = []
-    for faceIndex in xrange(faces.shape[0]):
+    for faceIndex in range(faces.shape[0]):
         face = faces[faceIndex]
         segment_1 = planeSegmentation[face[0]]
         segment_2 = planeSegmentation[face[1]]
@@ -686,7 +686,7 @@ if __name__=='__main__':
             print('download')
             download_release([scene_id], ROOT_FOLDER, FILETYPES, use_v1_sens=True)
             pass
-        print('plane fitting', scene_id)
+        print(('plane fitting', scene_id))
         if not os.path.exists(ROOT_FOLDER + '/' + scene_id + '/annotation/planes.ply'):
             readMesh(scene_id)
             pass

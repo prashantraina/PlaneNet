@@ -316,7 +316,7 @@ def drn_d_54(pretrained=False, out_map=256, num_classes=20, **kwargs):
     model = DRN(Bottleneck, [1, 1, 3, 4, 6, 3, 1, 1], arch='D', out_map=out_map, num_classes=num_classes, **kwargs)
     if pretrained:
         pretrained_dict = model_zoo.load_url(model_urls['drn-d-54'])
-        pretrained_dict = {k: v for k, v in pretrained_dict.items() if 'fc' not in k}
+        pretrained_dict = {k: v for k, v in list(pretrained_dict.items()) if 'fc' not in k}
         state = model.state_dict()
         state.update(pretrained_dict)
         model.load_state_dict(state)

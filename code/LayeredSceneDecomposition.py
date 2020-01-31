@@ -3,7 +3,7 @@ from pystruct.inference import get_installed, inference_ogm, inference_dispatch
 from utils import *
 
 def drawSolution(layeredSegmentations, numPlanes, index):
-    for layer in xrange(layeredSegmentations.shape[-1]):
+    for layer in range(layeredSegmentations.shape[-1]):
         segmentation = layeredSegmentations[:, :, layer]
         if index >= 0:
             cv2.imwrite('test/' + str(index) + '_segmentation_' + str(layer) + '.png', drawSegmentationImage(segmentation, blackIndex=numPlanes))
@@ -44,7 +44,7 @@ def getConcaveHullProposal(solution, depth, segmentations, planeDepths, NUM_LAYE
         depthGap = 0.05
         bestPlaneIndex = -1
         minNumConflict = width * height
-        for planeIndex in xrange(planeDepths.shape[-1]):
+        for planeIndex in range(planeDepths.shape[-1]):
             planeDepth = planeDepths[:, :, planeIndex]
             numConflicts = np.logical_and(np.logical_and(planeDepth < depth - depthGap, depth > 1e-4), planeDepth > 1e-4).sum()
             if numConflicts < conflictAreaThreshold:
@@ -73,9 +73,9 @@ def getConcaveHullProposal(solution, depth, segmentations, planeDepths, NUM_LAYE
     backgroundMask = np.zeros((height, width), dtype=np.bool)
     newLayoutSegmentation = layoutSegmentation.copy()
     for layoutIndex, planeIndex in enumerate(layoutPlanes):
-        print(layoutIndex, planeIndex)
+        print((layoutIndex, planeIndex))
         newLayoutSegmentation[layoutSegmentation == layoutIndex] = planeIndex
-        for layer in xrange(1, NUM_LAYERS):
+        for layer in range(1, NUM_LAYERS):
             proposal[layer][proposal[layer] == planeIndex] = NUM_PLANES
             continue
         backgroundMask = np.logical_or(backgroundMask, proposal[0] == planeIndex)
@@ -85,7 +85,7 @@ def getConcaveHullProposal(solution, depth, segmentations, planeDepths, NUM_LAYE
     
     backgroundMask = np.logical_not(backgroundMask)
     if backgroundMask.sum() > 0:
-        for layer in xrange(NUM_LAYERS - 1, 0, -1):
+        for layer in range(NUM_LAYERS - 1, 0, -1):
             proposal[layer][backgroundMask] = proposal[layer - 1][backgroundMask]
             continue
         pass
@@ -157,13 +157,13 @@ def getExpansionProposals(solution, depth, segmentations, planeDepths, NUM_LAYER
                 continue
             selectedPlaneIndex = np.random.choice(invalidLayoutPlanes)
 
-            print('expand layout plane', selectedPlaneIndex)
+            print(('expand layout plane', selectedPlaneIndex))
             proposals = [layoutProposal, ]
-            for layer in xrange(1, NUM_LAYERS):
+            for layer in range(1, NUM_LAYERS):
                 proposal = np.split(layoutProposal.copy(), NUM_LAYERS, axis=2)    
                 proposal = [np.squeeze(v) for v in proposal]
 
-                for otherLayer in xrange(1, NUM_LAYERS):
+                for otherLayer in range(1, NUM_LAYERS):
                     if otherLayer == layer:
                         continue
                     mask = proposal[otherLayer] == selectedPlaneIndex
@@ -177,15 +177,15 @@ def getExpansionProposals(solution, depth, segmentations, planeDepths, NUM_LAYER
             return proposals
         pass
 
-    print('expand plane', selectedPlaneIndex)
+    print(('expand plane', selectedPlaneIndex))
     
     
     proposals = []
-    for layer in xrange(NUM_LAYERS):
+    for layer in range(NUM_LAYERS):
         proposal = np.split(solution.copy(), NUM_LAYERS, axis=2)    
         proposal = [np.squeeze(v) for v in proposal]
 
-        for otherLayer in xrange(NUM_LAYERS):
+        for otherLayer in range(NUM_LAYERS):
             if otherLayer == layer:
                 continue
             mask = proposal[otherLayer] == selectedPlaneIndex
@@ -212,7 +212,7 @@ def getExpansionProposals(solution, depth, segmentations, planeDepths, NUM_LAYER
 
 def getLayerSwapProposals(solution, NUM_LAYERS=3, NUM_PLANES=15, height=192, width=256):
     proposals = []
-    for layer in xrange(1, NUM_LAYERS):
+    for layer in range(1, NUM_LAYERS):
         proposal = np.split(solution.copy(), NUM_LAYERS, axis=2)    
         proposal = [np.squeeze(v) for v in proposal]
 
@@ -335,7 +335,7 @@ def decompose(image, depth, normal, info, planes, segmentation):
     depthGap = 0.05
     
     solution = []
-    for iteration in xrange(6):
+    for iteration in range(6):
         if os.path.exists('test/solution_' + str(iteration) + '.npy') and iteration <= 4:
             solution = np.load('test/solution_' + str(iteration) + '.npy')
             continue
@@ -361,7 +361,7 @@ def decompose(image, depth, normal, info, planes, segmentation):
         visibleSegmentations = []
         for proposal in proposals:
             visibleSegmentation = proposal[:, :, 0].copy()
-            for layer in xrange(1, NUM_LAYERS):
+            for layer in range(1, NUM_LAYERS):
                 mask = proposal[:, :, layer] < NUM_PLANES
                 visibleSegmentation[mask] = proposal[:, :, layer][mask]
                 continue
@@ -382,7 +382,7 @@ def decompose(image, depth, normal, info, planes, segmentation):
         proposalDepths = proposalDepths.reshape((width * height, NUM_LAYERS, numProposals))
 
         conflictDepthMask = np.zeros((width * height, numProposals), dtype=np.bool)
-        for layer in xrange(1, NUM_LAYERS):
+        for layer in range(1, NUM_LAYERS):
             conflictDepthMask = np.logical_or(conflictDepthMask, np.logical_and(proposalDepths[:, layer, :] > proposalDepths[:, layer - 1, :] + depthGap, proposalDepths[:, layer - 1, :] > 1e-4))
             continue
         unaries += conflictDepthMask.astype(np.float32) * 100
@@ -471,9 +471,9 @@ def decompose(image, depth, normal, info, planes, segmentation):
                     diff = (invisibleEmptyMask).reshape((height - 1, width, NUM_LAYERS, numProposals, numProposals))
                     #diff = (labelDiff).reshape((height - 1, width, NUM_LAYERS, numProposals, numProposals))
 
-                    for proposalIndex_1 in xrange(numProposals):
-                        for proposalIndex_2 in xrange(numProposals):
-                            for layer in xrange(NUM_LAYERS):
+                    for proposalIndex_1 in range(numProposals):
+                        for proposalIndex_2 in range(numProposals):
+                            for layer in range(NUM_LAYERS):
                                 cv2.imwrite('test/cost_' + str(proposalIndex_1) + str(proposalIndex_2) + str(layer) + str(deltaIndex) + '.png', drawMaskImage(diff[:, :, layer, proposalIndex_1, proposalIndex_2]))
                                 continue
                             continue
@@ -485,9 +485,9 @@ def decompose(image, depth, normal, info, planes, segmentation):
                     diff = (invisibleEmptyMask).reshape((height, width - 1, NUM_LAYERS, numProposals, numProposals))
                     #diff = (labelDiff).reshape((height - 1, width, NUM_LAYERS, numProposals, numProposals))
 
-                    for proposalIndex_1 in xrange(numProposals):
-                        for proposalIndex_2 in xrange(numProposals):
-                            for layer in xrange(NUM_LAYERS):
+                    for proposalIndex_1 in range(numProposals):
+                        for proposalIndex_2 in range(numProposals):
+                            for layer in range(NUM_LAYERS):
                                 cv2.imwrite('test/cost_' + str(proposalIndex_1) + str(proposalIndex_2) + str(layer) + str(deltaIndex) + '.png', drawMaskImage(diff[:, :, layer, proposalIndex_1, proposalIndex_2]))
                                 continue
                             continue

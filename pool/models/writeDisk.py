@@ -11,8 +11,8 @@ textureHeight = texture.shape[0]
 numPoints = 0
 faces = []
 indicesMap = {}
-for y in xrange(textureHeight):
-    for x in xrange(textureWidth):
+for y in range(textureHeight):
+    for x in range(textureWidth):
         if np.sqrt(pow(x - textureWidth / 2, 2) + pow(y - textureHeight / 2, 2)) < min(textureHeight, textureWidth) / 2:
             indicesMap[y * textureWidth + x] = numPoints
             numPoints += 1
@@ -20,8 +20,8 @@ for y in xrange(textureHeight):
         continue
     continue
 
-for y in xrange(textureHeight):
-    for x in xrange(textureWidth):
+for y in range(textureHeight):
+    for x in range(textureWidth):
         neighbors = []
         for (u, v) in [(x, y), (x + 1, y), (x + 1, y + 1), (x, y + 1)]:
             if np.sqrt(pow(u - textureWidth / 2, 2) + pow(v - textureHeight / 2, 2)) < min(textureHeight, textureWidth) / 2:
@@ -68,8 +68,8 @@ property list uchar int vertex_indices
 end_header
 """
     outputFile.write(header)
-    for y in xrange(textureHeight):
-        for x in xrange(textureWidth):
+    for y in range(textureHeight):
+        for x in range(textureWidth):
             if np.sqrt(pow(x - textureWidth / 2, 2) + pow(y - textureHeight / 2, 2)) < min(textureHeight, textureWidth) / 2:
                 color = texture[y][x]
                 outputFile.write(str(float(x) / textureWidth * 2 - 1) + ' ' + str(float(y) / textureHeight * 2 - 1) + ' 0.0 ' + str(color[2]) + ' ' + str(color[1]) + ' ' + str(color[0]) + '\n')

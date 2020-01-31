@@ -46,16 +46,16 @@ if __name__=='__main__':
                        tf.local_variables_initializer())
     with tf.Session() as sess:
         sess.run(init_op)
-        for i in xrange(10000):
+        for i in range(10000):
             _, total_loss, loss_1, loss_2 = sess.run([train_op, loss, diff_loss, confidence_loss], feed_dict = {x: np.random.random((batchSize, 5))})
             if i % 100 == 0:
                 print((total_loss, loss_1, loss_2))
                 pass
             continue
         _, total_loss, x_, y_, c_, yc_ = sess.run([train_op, loss, x, y, c, yc], feed_dict = {x: np.tile(np.expand_dims(np.arange(5) + 1, 0), [batchSize, 1])})
-        print(x_[0])
-        print(y_[0])
-        print(c_[0])
-        print(yc_[0])        
+        print((x_[0]))
+        print((y_[0]))
+        print((c_[0]))
+        print((yc_[0]))        
         pass
         

@@ -119,7 +119,7 @@ def build_loss(img_inp_train, img_inp_val, global_pred_dict, deep_pred_dicts, gl
 
         img_inp = tf.cond(training_flag, lambda: img_inp_train, lambda: img_inp_val)
         global_gt_dict = {}
-        for name in global_gt_dict_train.keys():
+        for name in list(global_gt_dict_train.keys()):
             global_gt_dict[name] = tf.cond(training_flag, lambda: global_gt_dict_train[name], lambda: global_gt_dict_val[name])
             continue
         # local_gt_dict = {}
@@ -443,7 +443,7 @@ def main(options):
         val_inputs.append(options.rootFolder + '/planes_SUNCG_val.tfrecords')
         pass
     if '1' in options.hybrid:
-        for _ in xrange(10):
+        for _ in range(10):
             train_inputs.append(options.rootFolder + '/planes_nyu_rgbd_train.tfrecords')
             train_inputs.append(options.rootFolder + '/planes_nyu_rgbd_labeled_train.tfrecords')
             val_inputs.append(options.rootFolder + '/planes_nyu_rgbd_val.tfrecords')
@@ -576,7 +576,7 @@ def main(options):
             #fine-tune another model
             #var_to_restore = [v for v in var_to_restore if 'res4b22_relu_non_plane' not in v.name]
             loader = tf.train.Saver(var_to_restore)
-            print(options.checkpoint_dir.replace('crfrnn', 'crfrnn-'))
+            print((options.checkpoint_dir.replace('crfrnn', 'crfrnn-')))
             #exit(1)
             loader.restore(sess,"%s/checkpoint.ckpt"%(options.checkpoint_dir.replace('crfrnn', 'crfrnn-')))
             sess.run(batchno.assign(1))
@@ -605,7 +605,7 @@ def main(options):
                     _, total_loss, losses, summary_str, pred, debug, img, gt = sess.run([train_op, loss, loss_dict, summary_op, global_pred_dict, debug_dict, img_inp_train, global_gt_dict_train], feed_dict = {training_flag: batchType == 0})
 
                     if bno % (100 + 400 * int(options.crfrnn == 0)) == 50:
-                        for batchIndex in xrange(options.batchSize):
+                        for batchIndex in range(options.batchSize):
                             #print(losses)
                             #print(debug['plane'][batchIndex])
                             cv2.imwrite('test/' + str(batchIndex) + '_image.png', ((img[batchIndex] + 0.5) * 255).astype(np.uint8))
@@ -628,7 +628,7 @@ def main(options):
                     last_snapshot_time = time.time()
                     pass
 
-                print bno,'train', ema[0] / ema_acc[0], 'val', ema[1] / ema_acc[1], 'train rgbd', ema[2] / ema_acc[2], 'val rgbd', ema[3] / ema_acc[3], 'loss', total_loss, 'time', time.time()-t0
+                print((bno,'train', ema[0] / ema_acc[0], 'val', ema[1] / ema_acc[1], 'train rgbd', ema[2] / ema_acc[2], 'val rgbd', ema[3] / ema_acc[3], 'loss', total_loss, 'time', time.time()-t0))
 
                 if np.random.random() < 0.01:
                     print(losses)
@@ -729,7 +729,7 @@ def test(options):
             ranges = np.array([urange / imageWidth * 640 / focalLength, np.ones(urange.shape), -vrange / imageHeight * 480 / focalLength]).transpose([1, 2, 0])
 
 
-            for index in xrange(10):
+            for index in range(10):
                 print(('image', index))
                 t0=time.time()
 
@@ -932,11 +932,11 @@ def test(options):
                 if 'cost_mask' in debug:
                     cv2.imwrite(options.test_dir + '/' + str(index) + '_cost_mask.png', drawMaskImage(np.sum(debug['cost_mask'][0], axis=-1)))
 
-                    for planeIndex in xrange(options.numOutputPlanes + 1):
+                    for planeIndex in range(options.numOutputPlanes + 1):
                         cv2.imwrite(options.test_dir + '/' + str(index) + '_cost_mask_' + str(planeIndex) + '.png', drawMaskImage(debug['cost_mask'][0, :, :, planeIndex]))
                         continue
                     all_segmentations = np.concatenate([pred_s, pred_np_m], axis=2)
-                    for planeIndex in xrange(options.numOutputPlanes + 1):
+                    for planeIndex in range(options.numOutputPlanes + 1):
                         cv2.imwrite(options.test_dir + '/' + str(index) + '_segmentation_pred_' + str(planeIndex) + '.png', drawMaskImage(all_segmentations[:, :, planeIndex]))
                         continue
                     exit(1)
@@ -1056,7 +1056,7 @@ def test(options):
                 #print(pred_p)
                 #exit(1)
 
-                print('depth diff', np.abs(pred_d - gt_d).mean())
+                print(('depth diff', np.abs(pred_d - gt_d).mean()))
 
                 cv2.imwrite(options.test_dir + '/' + str(index) + '_segmentation_pred.png', drawSegmentationImage(all_segmentations, blackIndex=options.numOutputPlanes))
                 #exit(1)
@@ -1100,14 +1100,14 @@ def test(options):
                     #distance = distance[0]
                     print(distance)
                     diff = np.linalg.norm(np.expand_dims(planes, 1) - np.expand_dims(pred_p, 0), axis=2)
-                    print(np.concatenate([planes, pred_p, pow(np.min(diff, axis=1, keepdims=True), 2), np.expand_dims(np.argmin(diff, axis=1), -1)], axis=1))
+                    print((np.concatenate([planes, pred_p, pow(np.min(diff, axis=1, keepdims=True), 2), np.expand_dims(np.argmin(diff, axis=1), -1)], axis=1)))
                     print(pred_p_c)
 
                     #print(distance[:, 6:8].sum(0))
                     #print(pow(np.linalg.norm(distance[:, :3] - distance[:, 3:6], 2, 1), 2) * 100)
                     #print(test)
                     segmentation = np.argmax(all_segmentations, 2) - 1
-                    for planeIndex in xrange(options.numOutputPlanes):
+                    for planeIndex in range(options.numOutputPlanes):
                         cv2.imwrite(options.test_dir + '/segmentation_' + str(planeIndex) + '.png', drawMaskImage(segmentation == planeIndex))
                         cv2.imwrite(options.test_dir + '/segmentation_' + str(planeIndex) + '_gt.png', drawMaskImage(gt_s[:, :, planeIndex]))
                         cv2.imwrite(options.test_dir + '/segmentation_' + str(planeIndex) + '_gt_ori.png', drawMaskImage(gt_s_ori[:, :, planeIndex]))
@@ -1357,7 +1357,7 @@ if __name__=='__main__':
 
     args = parse_args()
 
-    print "keyname=%s task=%s started"%(args.keyname, args.task)
+    print(("keyname=%s task=%s started"%(args.keyname, args.task)))
     try:
         if args.task == "train":
             main(args)

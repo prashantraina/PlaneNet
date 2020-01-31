@@ -35,7 +35,7 @@ class ColorPalette:
 		
 
 def getNYURGBDCamera():
-    camera = {}
+	camera = {}
 	camera['fx'] = 5.1885790117450188e+02
 	camera['fy'] = 5.1946961112127485e+02
 	camera['cx'] = 3.2558244941119034e+02 - 40
@@ -487,7 +487,7 @@ def residual2PlanesGlobal(residualPlanes, predefinedPlanes):
 
 
 def getPlaneInfo(planes):
-    imageWidth = 640
+	imageWidth = 640
 	imageHeight = 480
 	focalLength = 517.97
 	urange = np.arange(imageWidth).reshape(1, -1).repeat(imageHeight, 0) - imageWidth * 0.5
@@ -499,7 +499,7 @@ def getPlaneInfo(planes):
 	return planeDepths, planeNormals
 
 def getProbability(image, segmentation):
-    width = image.shape[1]
+	width = image.shape[1]
 	height = image.shape[0]
 	numPlanes = segmentation.shape[0]
 	probabilities = np.exp(segmentation)
@@ -522,24 +522,24 @@ def getProbability(image, segmentation):
 	#										 kernel=dcrf.DIAG_KERNEL,
 	#										 normalization=dcrf.NORMALIZE_SYMMETRIC)
 
-		# This creates the color-dependent features --
-		# because the segmentation that we get from CNN are too coarse
-		# and we can use local color features to refine them
-		
-		feats = create_pairwise_bilateral(sdims=(50, 50), schan=(20, 20, 20),
-										  img=image, chdim=2)
-		d.addPairwiseEnergy(feats, compat=10,
-							kernel=dcrf.DIAG_KERNEL,
-							normalization=dcrf.NORMALIZE_SYMMETRIC)
-		
-		Q = d.inference(50)
+	# This creates the color-dependent features --
+	# because the segmentation that we get from CNN are too coarse
+	# and we can use local color features to refine them
+	
+	feats = create_pairwise_bilateral(sdims=(50, 50), schan=(20, 20, 20),
+									  img=image, chdim=2)
+	d.addPairwiseEnergy(feats, compat=10,
+						kernel=dcrf.DIAG_KERNEL,
+						normalization=dcrf.NORMALIZE_SYMMETRIC)
+	
+	Q = d.inference(50)
 
-		inds = np.argmax(Q, axis=0).reshape((height, width))
-		probabilities = np.zeros((height * width, numPlanes))
-		probabilities[np.arange(height * width), inds.reshape(-1)] = 1
-		probabilities = probabilities.reshape([height, width, -1])
-		#print(res.shape)
-		return probabilities
+	inds = np.argmax(Q, axis=0).reshape((height, width))
+	probabilities = np.zeros((height * width, numPlanes))
+	probabilities[np.arange(height * width), inds.reshape(-1)] = 1
+	probabilities = probabilities.reshape([height, width, -1])
+	#print(res.shape)
+	return probabilities
 
 def getProbabilityMax(segmentation):
 	width = segmentation.shape[2]
@@ -549,7 +549,7 @@ def getProbabilityMax(segmentation):
 	probabilities = np.zeros((height * width, numPlanes))
 	probabilities[np.arange(height * width), inds] = 1
 	probabilities = probabilities.reshape([height, width, -1])
-		return probabilities
+	return probabilities
 	
 def evaluateSegmentation(testdir, image, depth, normal, segmentation, planes, resultIndex=0):
 	width = depth.shape[1]

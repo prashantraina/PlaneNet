@@ -73,7 +73,7 @@ def clusterPlanes(options):
         
         try:
             predPlanes = []
-            for index in xrange(options.numImages):
+            for index in range(options.numImages):
                 if index % 10 == 0:
                     print(('image', index))
                     pass
@@ -84,7 +84,7 @@ def clusterPlanes(options):
                 predPlanes.append(global_pred['plane'][0])
                 continue
             predPlanes = np.array(predPlanes)
-            print(predPlanes.shape)
+            print((predPlanes.shape))
             predPlanes = np.mean(predPlanes, axis=0)
             np.save('dump/plane.npy', predPlanes)
             pass

@@ -28,7 +28,7 @@ def writeExample(writer, validating, imagePath):
     normal = np.array(PIL.Image.open(imagePath['normal'])).astype(np.float32) / 255 * 2 - 1
     normal = cv2.resize(normal, (WIDTH, HEIGHT), interpolation=cv2.INTER_LINEAR)
     norm = np.linalg.norm(normal, 2, 2)
-    for c in xrange(3):
+    for c in range(3):
         normal[:, :, c] /= norm
         continue
 
@@ -108,8 +108,8 @@ def readRecordFile():
 
         img_1d = np.fromstring(img_string, dtype=np.uint8)
         reconstructed_img = img_1d.reshape((height, width, -1))
-        print(np.array(plane).shape)
-        print(np.array(plane_mask).shape)
+        print((np.array(plane).shape))
+        print((np.array(plane_mask).shape))
         exit(1)
         continue
     return

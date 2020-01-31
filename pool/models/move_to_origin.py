@@ -22,7 +22,7 @@ with open(sys.argv[1]) as modelFile:
 xs = np.array(xs)
 ys = np.array(ys)
 zs = np.array(zs)
-print(xs.shape)
+print((xs.shape))
 minX = xs.min()
 maxX = xs.max()
 minY = ys.min()

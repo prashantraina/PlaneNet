@@ -32,7 +32,7 @@ def getGroundTruth(options):
     import scipy.io as sio
     if options.dataset == 'NYU_RGBD':
         image_indices = sio.loadmat('../../Data/NYU_RGBD/room_layout/index_303.mat')['index'].squeeze()
-        print(image_indices.shape)
+        print((image_indices.shape))
         test_indices = sio.loadmat('../../Data/NYU_RGBD/room_layout/data_split.mat')['test'].squeeze()
         train_indices = sio.loadmat('../../Data/NYU_RGBD/room_layout/data_split.mat')['train'].squeeze()
         indices = image_indices.nonzero()[0][test_indices - 1]
@@ -121,7 +121,7 @@ def getResults(options):
         pass
         
     options.checkpoint_dir = checkpoint_prefix + method[0]
-    print(options.checkpoint_dir)
+    print((options.checkpoint_dir))
     
     options.suffix = method[1]
 
@@ -131,7 +131,7 @@ def getResults(options):
     return
 
 def getPrediction(options, layout_planes):
-    print(options.test_dir)
+    print((options.test_dir))
     if not os.path.exists(options.test_dir):
         os.system("mkdir -p %s"%options.test_dir)
         pass
@@ -192,7 +192,7 @@ def getPrediction(options, layout_planes):
     
     pred_dict = {}
 
-    print(np.concatenate([np.expand_dims(np.arange(22), 1), ColorPalette(22).getColorMap()], axis=1))
+    print((np.concatenate([np.expand_dims(np.arange(22), 1), ColorPalette(22).getColorMap()], axis=1)))
 
     planeAreaThresholds = [WIDTH * HEIGHT / 400, WIDTH * HEIGHT / 400, WIDTH * HEIGHT / 400]
     dotThreshold = np.cos(np.deg2rad(60))
@@ -216,7 +216,7 @@ def getPrediction(options, layout_planes):
             predPlaneDepths = []
             predAllSegmentations = []
             predNormals = []
-            for index in xrange(options.startIndex + options.numImages):
+            for index in range(options.startIndex + options.numImages):
                 if index < options.startIndex:
                     continue
                 if options.imageIndex >= 0 and index != options.imageIndex:
@@ -294,7 +294,7 @@ def getPrediction(options, layout_planes):
                     #pred_d = all_depths.reshape(-1, options.numOutputPlanes + 1)[np.arange(WIDTH * HEIGHT), segmentation.reshape(-1)].reshape(HEIGHT, WIDTH)                    
                     #cv2.imwrite(options.test_dir + '/' + str(index) + '_depth_pred.png', drawDepthImage(pred_d))
                     if options.imageIndex >= 0:
-                        for planeIndex in xrange(options.numOutputPlanes):
+                        for planeIndex in range(options.numOutputPlanes):
                             cv2.imwrite(options.test_dir + '/mask_' + str(planeIndex) + '.png', drawMaskImage(all_segmentations[:, :, planeIndex]))
                             #cv2.imwrite(options.test_dir + '/mask_' + str(planeIndex) + '_depth.png', drawDepthImage(plane_depths[:, :, planeIndex]))                        
                             continue
@@ -419,7 +419,7 @@ def getPrediction(options, layout_planes):
                     
                     best_layout_plane_inds = layout_plane_inds + walls
                     bestScore = 0
-                    for numWalls in xrange(1, min(len(walls), 3) + 1):
+                    for numWalls in range(1, min(len(walls), 3) + 1):
                         for selectedWalls in itertools.combinations(walls, numWalls):
                             selected_plane_inds = np.array(layout_plane_inds + list(selectedWalls))
                             depths = []
@@ -434,7 +434,7 @@ def getPrediction(options, layout_planes):
                             selected_plane_segmentation[emptyMask] = -1
                             #overlap = (selected_plane_segmentation == segmentation).sum()
                             overlap = 0
-                            for planeIndex in xrange(options.numOutputPlanes):
+                            for planeIndex in range(options.numOutputPlanes):
                                 overlap += segmentations[:, :, planeIndex][selected_plane_segmentation == planeIndex].sum()
                                 continue
                             if overlap > bestScore:
@@ -549,7 +549,7 @@ def getPrediction(options, layout_planes):
             np.save('test/all_segmentations.npy', predAllSegmentations)
             predNormals = np.array(predNormals)
             np.save('test/normals.npy', predNormals) 
-            print('accuracy', total_accuracy / options.numImages)
+            print(('accuracy', total_accuracy / options.numImages))
             pass
         except tf.errors.OutOfRangeError:
             print('Done training -- epoch limit reached')
@@ -594,7 +594,7 @@ def testRoomLayout(options):
     
     total_accuracy = 0
     
-    for index in xrange(predSegmentations.shape[0]):
+    for index in range(predSegmentations.shape[0]):
         if index < options.startIndex:
             continue
         if options.imageIndex >= 0 and index != options.imageIndex:
@@ -614,7 +614,7 @@ def testRoomLayout(options):
         all_segmentations = predAllSegmentations[index]
         planeNormals = predNormals[index]
         if options.imageIndex >= 0:
-            for planeIndex in xrange(options.numOutputPlanes):
+            for planeIndex in range(options.numOutputPlanes):
                 #cv2.imwrite(options.test_dir + '/mask_' + str(planeIndex) + '.png', drawMaskImage(all_segmentations[:, :, planeIndex]))
                 cv2.imwrite(options.test_dir + '/mask_' + str(planeIndex) + '.png', drawMaskImage(segmentation == planeIndex))
                 #cv2.imwrite(options.test_dir + '/mask_' + str(planeIndex) + '_depth.png', drawDepthImage(plane_depths[:, :, planeIndex]))
@@ -661,7 +661,7 @@ def testRoomLayout(options):
             layout_plane_inds_array.append([-1, layout_plane_inds[1]])
             pass
         for layout_plane_inds in layout_plane_inds_array:
-            for numWalls in xrange(1, min(len(walls), 3) + 1):
+            for numWalls in range(1, min(len(walls), 3) + 1):
                 for combinationIndex, selectedWalls in enumerate(itertools.combinations(walls, numWalls)):
                     invalidCombination = False
                     for wallPlaneIndex, wallPlane in enumerate(selectedWalls):
@@ -705,7 +705,7 @@ def testRoomLayout(options):
                         else:
                             cv2.imwrite('test/segmentation_' + str(numWalls) + '_' + str(combinationIndex) + '_1.png', drawSegmentationImage(selected_plane_segmentation, blackIndex=options.numOutputPlanes))
                             pass
-                        print(combinationIndex, selectedWalls, selected_plane_inds, depths.shape, overlap)
+                        print((combinationIndex, selectedWalls, selected_plane_inds, depths.shape, overlap))
                         pass
                     if overlap > bestScore:
                         best_layout_plane_inds = selected_plane_inds
@@ -797,7 +797,7 @@ def testRoomLayout(options):
             exit(1)
             pass
         continue
-    print('accuracy', total_accuracy / options.numImages)
+    print(('accuracy', total_accuracy / options.numImages))
     return
 
 
@@ -843,7 +843,7 @@ def testRoomNet(options):
     total_accuracy = 0
 
     numImages = 0
-    for index in xrange(predSegmentations.shape[0]):
+    for index in range(predSegmentations.shape[0]):
         if index < options.startIndex:
             continue
         if options.imageIndex >= 0 and index != options.imageIndex:
@@ -877,7 +877,7 @@ def testRoomNet(options):
             us = indices % width_high_res
             vs = np.floor(indices / width_high_res)
             mask = np.ones(indices.shape, dtype=np.bool)
-            for i in xrange(len(cornerInds) - 1):
+            for i in range(len(cornerInds) - 1):
                 assert(not isinstance(cornerInds[i], tuple))
                 assert(not isinstance(cornerInds[i + 1], tuple))                
                 corner_1 = corners[cornerInds[i] - 1]
@@ -902,8 +902,8 @@ def testRoomNet(options):
         #print(index, corners)
             
         if options.imageIndex >= 0:
-            print((layout_pred == 0).sum())
-            print(roomType, cornerConfiguration)
+            print(((layout_pred == 0).sum()))
+            print((roomType, cornerConfiguration))
             print(corners)
             pass
             #exit(1)            
@@ -928,7 +928,7 @@ def testRoomNet(options):
             mask = layout_pred >= 3
             bestScore = 0
             bestLayoutIndex = 4
-            for layoutIndex in xrange(3, 6):
+            for layoutIndex in range(3, 6):
                 score = np.logical_and(mask, layout_gt == layoutIndex).sum()
                 if score > bestScore:
                     bestLayoutIndex = layoutIndex
@@ -940,13 +940,13 @@ def testRoomNet(options):
 
         emptyMask = layout_pred == 0
         if emptyMask.sum() > 0:
-            print(index, emptyMask.sum())
+            print((index, emptyMask.sum()))
             masks = measure.label(emptyMask, background=0)
-            for maskIndex in xrange(masks.min() + 1, masks.max() + 1):
+            for maskIndex in range(masks.min() + 1, masks.max() + 1):
                 mask = masks == maskIndex
                 bestScore = 0
                 bestLayoutIndex = 4
-                for layoutIndex in xrange(1, 6):
+                for layoutIndex in range(1, 6):
                     score = np.logical_and(mask, layout_gt == layoutIndex).sum()
                     if score > bestScore:
                         bestLayoutIndex = layoutIndex
@@ -969,7 +969,7 @@ def testRoomNet(options):
             exit(1)
             pass
         continue
-    print('accuracy', total_accuracy / numImages)
+    print(('accuracy', total_accuracy / numImages))
     return
 
 if __name__=='__main__':

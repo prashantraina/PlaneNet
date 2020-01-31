@@ -101,7 +101,7 @@ class PlaneNetDetector():
             pred_np_d = np.expand_dims(cv2.resize(pred_np_d.squeeze(), (width_high_res, height_high_res)), -1)
             all_depths = np.concatenate([plane_depths, pred_np_d], axis=2)
 
-            all_segmentations = np.stack([cv2.resize(all_segmentations[:, :, planeIndex], (width_high_res, height_high_res)) for planeIndex in xrange(all_segmentations.shape[-1])], axis=2)
+            all_segmentations = np.stack([cv2.resize(all_segmentations[:, :, planeIndex], (width_high_res, height_high_res)) for planeIndex in range(all_segmentations.shape[-1])], axis=2)
                 
             segmentation = np.argmax(all_segmentations, 2)
             pred_d = all_depths.reshape(-1, self.options.numOutputPlanes + 1)[np.arange(height_high_res * width_high_res), segmentation.reshape(-1)].reshape(height_high_res, width_high_res)

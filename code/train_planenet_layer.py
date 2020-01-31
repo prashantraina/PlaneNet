@@ -158,7 +158,7 @@ def build_loss(global_pred_dict, deep_pred_dicts, global_gt_dict_train, global_g
         debug_dict = {}
         
         global_gt_dict = {}
-        for name in global_gt_dict_train.keys():
+        for name in list(global_gt_dict_train.keys()):
             global_gt_dict[name] = tf.cond(training_flag, lambda: global_gt_dict_train[name], lambda: global_gt_dict_val[name])
             continue
         # local_gt_dict = {}
@@ -476,7 +476,7 @@ def main(options):
         val_inputs.append(options.rootFolder + '/planes_SUNCG_val.tfrecords')        
         pass
     if '1' in options.hybrid:
-        for _ in xrange(10):
+        for _ in range(10):
             train_inputs.append(options.rootFolder + '/planes_nyu_rgbd_train.tfrecords')
             val_inputs.append(options.rootFolder + '/planes_nyu_rgbd_val.tfrecords')
             continue
@@ -606,12 +606,12 @@ def main(options):
                     pass
 
                 _, total_loss, losses, summary_str, global_gt = sess.run([train_op, loss, loss_dict, summary_op, global_gt_dict_train], feed_dict = {training_flag: batchType == 0})
-                for batchIndex in xrange(options.batchSize):
+                for batchIndex in range(options.batchSize):
                     if np.isnan(global_gt['plane'][batchIndex]).any():
                         #print(losses)
                         #print(global_gt['plane'][batchIndex])
-                        print(global_gt['num_planes'][batchIndex])
-                        for planeIndex in xrange(global_gt['num_planes'][batchIndex]):
+                        print((global_gt['num_planes'][batchIndex]))
+                        for planeIndex in range(global_gt['num_planes'][batchIndex]):
                             cv2.imwrite('test/mask_' + str(planeIndex) + '.png', drawMaskImage(global_gt['segmentation'][batchIndex, :, :, planeIndex]))
                             continue
                         np.save('temp/plane.npy', global_gt['plane'][batchIndex])                        
@@ -635,7 +635,7 @@ def main(options):
                     last_snapshot_time = time.time()
                     pass
         
-                print bno,'train', ema[0] / ema_acc[0], 'val', ema[1] / ema_acc[1], 'train rgbd', ema[2] / ema_acc[2], 'val rgbd', ema[3] / ema_acc[3], 'loss', total_loss, 'time', time.time()-t0
+                print((bno,'train', ema[0] / ema_acc[0], 'val', ema[1] / ema_acc[1], 'train rgbd', ema[2] / ema_acc[2], 'val rgbd', ema[3] / ema_acc[3], 'loss', total_loss, 'time', time.time()-t0))
 
                 if np.random.random() < 0.01 or True:
                     print(losses)
@@ -744,7 +744,7 @@ def test(options):
             ranges = np.array([urange / imageWidth * 640 / focalLength, np.ones(urange.shape), -vrange / imageHeight * 480 / focalLength]).transpose([1, 2, 0])
 
 
-            for index in xrange(10):
+            for index in range(10):
                 print(('image', index))
                 t0=time.time()
 
@@ -1047,30 +1047,30 @@ def test(options):
                     cv2.imwrite(options.test_dir + '/' + str(index) + '_cost_mask.png', drawMaskImage(debug['cost_mask'][0].sum(2)))
 
 
-                    for planeIndex in xrange(debug['depth'].shape[-1]):
+                    for planeIndex in range(debug['depth'].shape[-1]):
                         cv2.imwrite(options.test_dir + '/' + str(index) + '_cost_depth_' + str(planeIndex) + '.png', drawMaskImage(debug['depth'][0, :, :, planeIndex]))
-                        print(planeIndex, debug['depth'][0, :, :, planeIndex].mean())
+                        print((planeIndex, debug['depth'][0, :, :, planeIndex].mean()))
                         continue
                         
                     total_loss = 0
-                    for planeIndex in xrange(debug['cost_mask'].shape[-1]):
+                    for planeIndex in range(debug['cost_mask'].shape[-1]):
                         print((planeIndex, debug['cost_mask'][0, :, :, planeIndex].max(), debug['cost_mask'][0, :, :, planeIndex].min(), debug['cost_mask'][0, :, :, planeIndex].mean() * 200000. / 22))
                         total_loss += debug['cost_mask'][0, :, :, planeIndex].mean() * 200000. / 22
                         cv2.imwrite(options.test_dir + '/' + str(index) + '_cost_mask_' + str(planeIndex) + '.png', drawMaskImage(debug['cost_mask'][0, :, :, planeIndex]))
                         continue
                     print(total_loss)
                     
-                    for planeIndex in xrange(options.numOutputPlanes + 1):
+                    for planeIndex in range(options.numOutputPlanes + 1):
                         cv2.imwrite(options.test_dir + '/' + str(index) + '_mask_' + str(planeIndex) + '.png', drawMaskImage(all_segmentations_softmax[:, :, planeIndex]))
                         continue
 
-                    for planeIndex in xrange(options.numOutputPlanes_0):
+                    for planeIndex in range(options.numOutputPlanes_0):
                         cv2.imwrite(options.test_dir + '/' + str(index) + '_layer_mask_' + str(planeIndex) + '.png', drawMaskImage(layer_segmentations_softmax_0[:, :, planeIndex]))
                         continue
 
                     cv2.imwrite(options.test_dir + '/' + str(index) + '_segmentation_gt.png', drawSegmentationImage(np.concatenate([gt_s_ori, 1 - planeMask], axis=2), blackIndex=options.numOutputPlanes))
                     gt_s_ori = debug['segmentation'][0]
-                    for planeIndex in xrange(options.numOutputPlanes):
+                    for planeIndex in range(options.numOutputPlanes):
                         cv2.imwrite(options.test_dir + '/mask_gt_' + str(planeIndex) + '.png', drawMaskImage(gt_s[:, :, planeIndex]))
                         #cv2.imwrite(options.test_dir + '/mask_background_' + str(planeIndex) + '.png', drawMaskImage(debug['background'][0, :, :, planeIndex]))
                         continue
@@ -1087,10 +1087,10 @@ def test(options):
                     # print(all_segmentations_softmax.max(0).max(0))
                     # print(all_segmentations_softmax.min(0).min(0))
 
-                    print(pred_s[150][150])
-                    print(all_segmentations_softmax[150][150])
-                    print(layer_segmentations_softmax_0[150][150])
-                    print(global_pred['empty_mask'][0][150][150])
+                    print((pred_s[150][150]))
+                    print((all_segmentations_softmax[150][150]))
+                    print((layer_segmentations_softmax_0[150][150]))
+                    print((global_pred['empty_mask'][0][150][150]))
                     #cv2.imwrite(options.test_dir + '/mask_empty.png', drawMaskImage(gt_s[:, :, 5] + gt_s[:, :, 14]))
                     # plane_depths = calcPlaneDepths(gt_p, WIDTH, HEIGHT, global_gt['info'][0])
                     # mask_5 = plane_depths[:, :, 5] < plane_depths[:, :, 14]
@@ -1107,10 +1107,10 @@ def test(options):
                     gt_s = debug['segmentation'][0]
                     #all_segmentations_softmax = softmax(pred_s)
                     all_segmentations_softmax = pred_s
-                    print(gt_s.sum(2).max(), gt_s.sum(2).min(), all_segmentations_softmax.sum(2).max(), all_segmentations_softmax.sum(2).min(), all_segmentations_softmax.max(), all_segmentations_softmax.min())
+                    print((gt_s.sum(2).max(), gt_s.sum(2).min(), all_segmentations_softmax.sum(2).max(), all_segmentations_softmax.sum(2).min(), all_segmentations_softmax.max(), all_segmentations_softmax.min()))
                     #print(gt_s[:, :, 7].max())
                     total_loss = 0
-                    for planeIndex in xrange(options.numOutputPlanes + 1):                    
+                    for planeIndex in range(options.numOutputPlanes + 1):                    
                         #print(debug['segmentation_loss'][0, planeIndex].mean())
                         if planeIndex < options.numOutputPlanes:
                             loss = -(gt_s[:, :, planeIndex] * np.log(np.maximum(all_segmentations_softmax[:, :, planeIndex], 1e-31))).mean() * 1000
@@ -1224,7 +1224,7 @@ def predict(options):
         for index, im_name in enumerate(im_names):
             if index <= -1:
                 continue
-            print(im_name['image'])
+            print((im_name['image']))
             im = cv2.imread(im_name['image'])
             image = im.astype(np.float32, copy=False)
             image = image / 255 - 0.5
@@ -1242,7 +1242,7 @@ def predict(options):
 
             normal = np.array(PIL.Image.open(im_name['normal'])).astype(np.float) / 255 * 2 - 1
             norm = np.linalg.norm(normal, 2, 2)
-            for c in xrange(3):
+            for c in range(3):
                 normal[:, :, c] /= norm
                 continue
             normal = cv2.resize(normal, (WIDTH, HEIGHT), interpolation=cv2.INTER_LINEAR)
@@ -1315,7 +1315,7 @@ def predict(options):
             #writePLYFile(options.test_dir, index, image, pred_p, segmentation)
 
             if index < 0:
-                for planeIndex in xrange(options.numOutputPlanes):
+                for planeIndex in range(options.numOutputPlanes):
                     cv2.imwrite(options.test_dir + '/' + str(index) + '_segmentation_' + str(planeIndex) + '.png', drawMaskImage(pred_s[:, :, planeIndex]))
                     #cv2.imwrite(options.test_dir + '/' + str(index) + '_segmentation_' + str(planeIndex) + '_gt.png', drawMaskImage(gt_s[:, :, planeIndex]))
                     continue
@@ -1365,7 +1365,7 @@ def fitPlanesRGBD(options):
             gtDepths = []
             predDepths = []
             planeMasks = []
-            for index in xrange(10):
+            for index in range(10):
                 image, depth, path = sess.run([img_inp_rgbd, global_gt_dict_rgbd['depth'], global_gt_dict_rgbd['path']])
                 image = ((image[0] + 0.5) * 255).astype(np.uint8)
                 depth = depth.squeeze()
@@ -1575,7 +1575,7 @@ if __name__=='__main__':
     
     args = parse_args()
 
-    print "keyname=%s task=%s started"%(args.keyname, args.task)
+    print(("keyname=%s task=%s started"%(args.keyname, args.task)))
     try:
         if args.task == "train":
             main(args)

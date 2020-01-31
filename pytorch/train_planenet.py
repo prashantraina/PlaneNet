@@ -24,7 +24,7 @@ def main(options):
     dataset = PlaneDataset(options, split='train', random=True)
     dataset_test = PlaneDataset(options, split='test', random=False)
 
-    print('the number of images', len(dataset), len(dataset_test))    
+    print(('the number of images', len(dataset), len(dataset_test)))    
 
     dataloader = DataLoader(dataset, batch_size=options.batchSize, shuffle=True, num_workers=16)
 
@@ -61,7 +61,7 @@ def main(options):
 
             distances = torch.norm(planes_gt.unsqueeze(2) - planes_pred.unsqueeze(1), dim=-1)
             W = distances.max() - distances.transpose(1, 2)
-            mapping = torch.stack([assignmentModule(W[batchIndex]) for batchIndex in xrange(len(distances))], dim=0)
+            mapping = torch.stack([assignmentModule(W[batchIndex]) for batchIndex in range(len(distances))], dim=0)
 
             mapping = oneHotModule(mapping.view(-1), depth=int(planes_pred.shape[1])).view((int(mapping.shape[0]), int(mapping.shape[1]), -1))
             planes_pred_shuffled = torch.matmul(mapping, planes_pred)
@@ -110,7 +110,7 @@ def main(options):
                     exit(1)
                     pass
             continue
-        print('loss', np.array(epoch_losses).mean(0))
+        print(('loss', np.array(epoch_losses).mean(0)))
         if True:
             torch.save(model.state_dict(), options.checkpoint_dir + '/checkpoint.pth')
             torch.save(optimizer.state_dict(), options.checkpoint_dir + '/optim.pth')
@@ -136,7 +136,7 @@ def testOneEpoch(options, model, plane_criterion, segmentation_criterion, depth_
 
         distances = torch.norm(planes_gt.unsqueeze(2) - planes_pred.unsqueeze(1), dim=-1)
         W = distances.max() - distances.transpose(1, 2)
-        mapping = torch.stack([assignmentModule(W[batchIndex]) for batchIndex in xrange(len(distances))], dim=0)
+        mapping = torch.stack([assignmentModule(W[batchIndex]) for batchIndex in range(len(distances))], dim=0)
 
         mapping = oneHotModule(mapping.view(-1), depth=int(planes_pred.shape[1])).view((int(mapping.shape[0]), int(mapping.shape[1]), -1))
         planes_pred_shuffled = torch.matmul(mapping, planes_pred)
@@ -184,7 +184,7 @@ def testOneEpoch(options, model, plane_criterion, segmentation_criterion, depth_
                 exit(1)
                 pass
         continue
-    print('validation loss', np.array(epoch_losses).mean(0))
+    print(('validation loss', np.array(epoch_losses).mean(0)))
 
     model.train()
     return
@@ -225,6 +225,6 @@ if __name__ == '__main__':
     args.checkpoint_dir = 'checkpoint/' + args.keyname
     args.test_dir = 'test/' + args.keyname
 
-    print('keyname=%s task=%s started'%(args.keyname, args.task))
+    print(('keyname=%s task=%s started'%(args.keyname, args.task)))
 
     main(args)

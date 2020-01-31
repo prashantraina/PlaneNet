@@ -42,7 +42,7 @@ def writeExample(writer, imagePath):
             elif line[0] == 'm_depthShift':
                 info[2] = int(line[2])
             elif line[0] == 'm_calibrationDepthIntrinsic':
-                for i in xrange(16):
+                for i in range(16):
                     info[3 + i] = float(line[2 + i])
                     continue
                 pass
@@ -70,25 +70,25 @@ def writeExample(writer, imagePath):
 
     #print(segments)
 
-    segmentList = zip(segments, unique_counts)
+    segmentList = list(zip(segments, unique_counts))
     segmentList = [segment for segment in segmentList if segment[0] not in [-1, 167771]]
 
     if len(segmentList) == 0 or len(segmentList) > NUM_PLANES:
         if len(segmentList) > NUM_PLANES and False:
-            print('num planes ' + str(len(segmentList)))
+            print(('num planes ' + str(len(segmentList))))
             cv2.imwrite('test/image.png', img)            
             cv2.imwrite('test/segmentation.png', drawSegmentationImage(globalSegmentation))
             cv2.imwrite('test/boundary.png', drawMaskImage(boundary_mask))
             cv2.imwrite('test/non_plane.png', drawMaskImage(non_plane_mask))
             cv2.imwrite('test/depth.png', drawDepthImage(depth))
-            print(imagePath['segmentation'])
+            print((imagePath['segmentation']))
             exit(1)
             pass
         return
         
     #segmentList = sorted(segmentList, key=lambda x:-x[1])
     #segmentList = segmentList[:min(len(segmentList), NUM_PLANES)]
-    segments, unique_counts = zip(*segmentList)
+    segments, unique_counts = list(zip(*segmentList))
     segments = list(segments)
     unique_counts = list(unique_counts)
 
@@ -115,7 +115,7 @@ def writeExample(writer, imagePath):
     kernel[0][0] = kernel[2][0] = kernel[0][2] = kernel[2][2] = 0
 
     ori_boundary_mask = boundary_mask
-    for _ in xrange(2):
+    for _ in range(2):
         segmentation = segmentation + cv2.dilate(segmentation, kernel) * boundary_mask
         boundary_mask = boundary_mask * (segmentation == 0)
         continue
@@ -183,7 +183,7 @@ if __name__=='__main__':
     #datasets = {'scannet': '/mnt/vision/ScanNet/data/', 'matterport': '/mnt/vision/matterport/data/v1/scans/'}
     datasets = {'scannet': '/home/chenliu/Projects/Data/ScanNet/data/', 'matterport': '/mnt/vision/matterport/data/v1/scans/'}
 
-    for dataset, ROOT_FOLDER in datasets.iteritems():
+    for dataset, ROOT_FOLDER in list(datasets.items()):
         if dataset == 'matterport':
             continue
         all_scene_ids = os.listdir(ROOT_FOLDER)
@@ -214,7 +214,7 @@ if __name__=='__main__':
             else:
                 imagePaths = imagePaths[100000:]
                 pass
-            print('num images', len(imagePaths))
+            print(('num images', len(imagePaths)))
                 
             #writeRecordFile('/mnt/vision/PlaneNet/planes_' + dataset + '_' + split + '_raw.tfrecords', imagePaths)
             writeRecordFile('/home/chenliu/Projects/Data/PlaneNet/planes_' + dataset + '_' + split + '_raw_2.tfrecords', imagePaths)

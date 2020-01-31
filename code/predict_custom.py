@@ -42,7 +42,7 @@ def writeHTML(options):
     #methods = ['planenet', 'pixelwise', 'pixelwise+RANSAC', 'GT+RANSAC', 'planenet+crf', 'pixelwise+semantics+RANSAC']
     #methods = ['planenet', 'pixelwise', 'pixelwise+RANSAC', 'GT+RANSAC']
 
-    for image_index in xrange(options.numImages):
+    for image_index in range(options.numImages):
 
         t = h.table(border='1')
         r_inp = t.tr()
@@ -109,7 +109,7 @@ def evaluatePlanes(options):
 
 
     for pred_dict in predictions:
-        for key, value in pred_dict.iteritems():
+        for key, value in list(pred_dict.items()):
             if value.shape[0] > options.numImages:
                 pred_dict[key] = value[:options.numImages]
                 pass
@@ -124,7 +124,7 @@ def evaluatePlanes(options):
 
 
 
-    for image_index in xrange(options.visualizeImages):
+    for image_index in range(options.visualizeImages):
         if args.imageIndex >= 0 and image_index + options.startIndex != args.imageIndex:
             continue
         #print(info)
@@ -132,7 +132,7 @@ def evaluatePlanes(options):
         for method_index, pred_dict in enumerate(predictions):
             if image_index >= pred_dict['image'].shape[0]:
                 break
-            print(pred_dict['info'][image_index])
+            print((pred_dict['info'][image_index]))
 
             cv2.imwrite(options.test_dir + '/' + str(image_index + options.startIndex) + '_image.png', pred_dict['image'][image_index])
             info = pred_dict['info'][image_index]
@@ -152,7 +152,7 @@ def evaluatePlanes(options):
             segmentationImageBlended = np.minimum(segmentationImage * 0.3 + pred_dict['image'][image_index] * 0.7, 255).astype(np.uint8)
 
             if options.imageIndex >= 0:
-                for planeIndex in xrange(options.numOutputPlanes):
+                for planeIndex in range(options.numOutputPlanes):
                     cv2.imwrite('test/mask_' + str(planeIndex) + '.png', drawMaskImage(segmentation == planeIndex))
                     continue
 
@@ -177,7 +177,7 @@ def evaluatePlanes(options):
                     planes = pred_dict['plane']
                     planes /= np.linalg.norm(planes, axis=-1, keepdims=True)
                     print([(planeIndex, plane) for planeIndex, plane in enumerate(planes[0])])
-                    for planeIndex in xrange(options.numOutputPlanes):
+                    for planeIndex in range(options.numOutputPlanes):
                         cv2.imwrite('test/mask_' + str(planeIndex) + '.png', drawMaskImage(segmentation == planeIndex))
                         continue
 
@@ -186,7 +186,7 @@ def evaluatePlanes(options):
                     newSegmentation = np.full(segmentation.shape, -1)
                     newPlaneIndex = 0
                     planes = pred_dict['plane'][image_index]
-                    for planeIndex in xrange(options.numOutputPlanes):
+                    for planeIndex in range(options.numOutputPlanes):
                         mask = segmentation == planeIndex
                         if mask.sum() > 0:
                             newPlanes.append(planes[planeIndex])
@@ -267,7 +267,7 @@ def getResults(options):
             pass
 
         options.checkpoint_dir = checkpoint_prefix + method[0]
-        print(options.checkpoint_dir)
+        print((options.checkpoint_dir))
 
         options.suffix = method[1]
 
@@ -362,7 +362,7 @@ def getPrediction(options):
             predBoundaries = []
             images = []
             infos = []
-            for index in xrange(min(options.startIndex + options.numImages, len(image_list))):
+            for index in range(min(options.startIndex + options.numImages, len(image_list))):
                 if index % 10 == 0:
                     print(('image', index))
                     pass
@@ -438,7 +438,7 @@ def getPrediction(options):
                 pred_np_d = np.expand_dims(cv2.resize(pred_np_d.squeeze(), (width_high_res, height_high_res)), -1)
                 all_depths = np.concatenate([plane_depths, pred_np_d], axis=2)
 
-                all_segmentations = np.stack([cv2.resize(all_segmentations[:, :, planeIndex], (width_high_res, height_high_res)) for planeIndex in xrange(all_segmentations.shape[-1])], axis=2)
+                all_segmentations = np.stack([cv2.resize(all_segmentations[:, :, planeIndex], (width_high_res, height_high_res)) for planeIndex in range(all_segmentations.shape[-1])], axis=2)
 
                 segmentation = np.argmax(all_segmentations, 2)
                 pred_d = all_depths.reshape(-1, options.numOutputPlanes + 1)[np.arange(height_high_res * width_high_res), segmentation.reshape(-1)].reshape(height_high_res, width_high_res)
@@ -547,7 +547,7 @@ if __name__=='__main__':
         args.test_dir += '/' + args.suffix + '/'
         pass
 
-    print(args.titles)
+    print((args.titles))
 
     if args.task == 'custom':
         evaluatePlanes(args)

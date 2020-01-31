@@ -74,10 +74,10 @@ def writeRecordFile(split):
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(sess=sess, coord=coord)
         try:
-            for _ in xrange(numImages / batchSize):
+            for _ in range(numImages / batchSize):
                 print(_)
                 img, global_gt = sess.run([img_inp, global_gt_dict])
-                for batchIndex in xrange(batchSize):
+                for batchIndex in range(batchSize):
                     if global_gt['num_planes'][batchIndex] == 0:
                         print('no plane')
                         continue

@@ -8,8 +8,8 @@ def findProposals(segmentations, numProposals = 5):
     segmentationsNeighbors = []
     windowSize = 5
     segmentationsPadded = np.pad(segmentations, ((windowSize, windowSize), (windowSize, windowSize), (0, 0)), mode='constant')
-    for shiftX in xrange(windowSize * 2 + 1):
-        for shiftY in xrange(windowSize * 2 + 1):
+    for shiftX in range(windowSize * 2 + 1):
+        for shiftY in range(windowSize * 2 + 1):
             segmentationsNeighbors.append(segmentationsPadded[shiftY:shiftY + height, shiftX:shiftX + width, :])
             continue
         continue
@@ -98,15 +98,15 @@ def refineSegmentation(image, allSegmentations, allDepths, boundaries, numOutput
         x = 75
         y = 88
         print((y - deltaY, x - deltaX))
-        print(proposals[(y - deltaY) * width + (x - deltaX)])
-        print(proposals[y * width + x])
+        print((proposals[(y - deltaY) * width + (x - deltaX)]))
+        print((proposals[y * width + x]))
         #index = neighbor_nodes == y * width + x
         index = partial_nodes == y * width + x
-        print(pairwise_cost[index])
-        print(depth_diff[index])
-        print(depth_1_1[index])
-        print(depth_2_2[index])                
-        print(color_diff[index])
+        print((pairwise_cost[index]))
+        print((depth_diff[index]))
+        print((depth_1_1[index]))
+        print((depth_2_2[index]))                
+        print((color_diff[index]))
         
         #print(intensityDifference)
         #exit(1)
@@ -177,7 +177,7 @@ def getSegmentationsTRWS(planes, image, depth, normal, segmentation, semantics, 
         pass
     
     planeMasks = []
-    for planeIndex in xrange(numPlanes):
+    for planeIndex in range(numPlanes):
         #print(np.bincount(semantics[segmentation == planeIndex]))
         planeMaskOri = segmentation == planeIndex
         semantic = np.bincount(semantics[planeMaskOri]).argmax()
@@ -280,14 +280,14 @@ def removeSmallSegments(planes, image, depth, normal, segmentation, semantics, i
     emptyMask = segmentation == numOutputPlanes
 
     newSegmentation = np.ones((height, width), dtype=np.uint8) * numOutputPlanes
-    for planeIndex in xrange(numPlanes):
+    for planeIndex in range(numPlanes):
         planeMask = segmentation == planeIndex
         planeMaskDilated = cv2.dilate(planeMask.astype(np.uint8), np.ones((3, 3), dtype=np.uint8)).astype(np.bool)
         planeMaskDilated = planeMaskDilated
         
         components = measure.label(planeMaskDilated, background=0)
         isValid = False
-        for label in xrange(components.max() + 1):
+        for label in range(components.max() + 1):
             mask = components == label
             maskEroded = cv2.erode(mask.astype(np.float32), np.ones((3, 3), dtype=np.float32), iterations=2)
             #print((planeIndex, maskEroded.sum()))

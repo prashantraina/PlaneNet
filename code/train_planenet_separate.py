@@ -76,11 +76,11 @@ def build_loss(global_pred_dict, local_pred_dict, deep_pred_dicts, global_gt_dic
     
     with tf.device('/gpu:%d'%options.gpu_id):
         global_gt_dict = {}
-        for name in global_gt_dict_train.keys():
+        for name in list(global_gt_dict_train.keys()):
             global_gt_dict[name] = tf.cond(training_flag, lambda: global_gt_dict_train[name], lambda: global_gt_dict_val[name])
             continue
         local_gt_dict = {}
-        for name in local_gt_dict_train.keys():
+        for name in list(local_gt_dict_train.keys()):
             local_gt_dict[name] = tf.cond(training_flag, lambda: local_gt_dict_train[name], lambda: local_gt_dict_val[name])
             continue
 
@@ -276,7 +276,7 @@ def build_loss(global_pred_dict, local_pred_dict, deep_pred_dicts, global_gt_dic
 def build_loss_rgbd(global_pred_dict, deep_pred_dicts, global_gt_dict_train, global_gt_dict_val, training_flag, options):
     with tf.device('/gpu:%d'%options.gpu_id):
         global_gt_dict = {}
-        for name in global_gt_dict_train.keys():
+        for name in list(global_gt_dict_train.keys()):
             global_gt_dict[name] = tf.cond(training_flag, lambda: global_gt_dict_train[name], lambda: global_gt_dict_val[name])
             continue
 
@@ -309,7 +309,7 @@ def build_loss_rgbd(global_pred_dict, deep_pred_dicts, global_gt_dict_train, glo
 def build_loss_3d(global_pred_dict, deep_pred_dicts, global_gt_dict_train, global_gt_dict_val, training_flag, options):
     with tf.device('/gpu:%d'%options.gpu_id):
         global_gt_dict = {}
-        for name in global_gt_dict_train.keys():
+        for name in list(global_gt_dict_train.keys()):
             global_gt_dict[name] = tf.cond(training_flag, lambda: global_gt_dict_train[name], lambda: global_gt_dict_val[name])
             continue
         # local_gt_dict = {}
@@ -626,7 +626,7 @@ def main(options):
                     last_snapshot_time = time.time()
                     pass
         
-                print bno,'train', ema[0] / ema_acc[0], 'val', ema[1] / ema_acc[1], 'train rgbd', ema[2] / ema_acc[2], 'val rgbd', ema[3] / ema_acc[3], 'loss', total_loss, 'time', time.time()-t0
+                print((bno,'train', ema[0] / ema_acc[0], 'val', ema[1] / ema_acc[1], 'train rgbd', ema[2] / ema_acc[2], 'val rgbd', ema[3] / ema_acc[3], 'loss', total_loss, 'time', time.time()-t0))
 
                 if np.random.random() < 0.01:
                     print(losses)
@@ -725,7 +725,7 @@ def test(options):
             ranges = np.array([urange / imageWidth * 640 / focalLength, np.ones(urange.shape), -vrange / imageHeight * 480 / focalLength]).transpose([1, 2, 0])
 
 
-            for index in xrange(10):
+            for index in range(10):
                 print(('image', index))
                 t0=time.time()
 
@@ -884,15 +884,15 @@ def test(options):
                     print(gt_p)
                     plane_depths = calcPlaneDepths(gt_p, WIDTH, HEIGHT)
                     segmentation = np.argmax(gt_s, 2)
-                    for planeIndex in xrange(options.numOutputPlanes):
+                    for planeIndex in range(options.numOutputPlanes):
                         mask = gt_s[:, :, planeIndex]
                         if mask.sum() > 0:
                             cv2.imwrite(options.test_dir + '/mask_' + str(planeIndex) + '.png', drawMaskImage(mask))
                             pass
                         continue
                     pred_d = plane_depths.reshape(-1, options.numOutputPlanes)[np.arange(WIDTH * HEIGHT), segmentation.reshape(-1)].reshape(HEIGHT, WIDTH)
-                    print(np.max(pred_d))
-                    print(pred_d[60][120])
+                    print((np.max(pred_d)))
+                    print((pred_d[60][120]))
                     cv2.imwrite(options.test_dir + '/' + str(index) + '_depth_pred.png', drawDepthImage(pred_d))
                     exit(1)
                     pass
@@ -1044,14 +1044,14 @@ def test(options):
                     #distance = distance[0]
                     print(distance)
                     diff = np.linalg.norm(np.expand_dims(planes, 1) - np.expand_dims(pred_p, 0), axis=2)
-                    print(np.concatenate([planes, pred_p, pow(np.min(diff, axis=1, keepdims=True), 2), np.expand_dims(np.argmin(diff, axis=1), -1)], axis=1))
+                    print((np.concatenate([planes, pred_p, pow(np.min(diff, axis=1, keepdims=True), 2), np.expand_dims(np.argmin(diff, axis=1), -1)], axis=1)))
                     print(pred_p_c)
                     
                     #print(distance[:, 6:8].sum(0))
                     #print(pow(np.linalg.norm(distance[:, :3] - distance[:, 3:6], 2, 1), 2) * 100)
                     #print(test)
                     segmentation = np.argmax(all_segmentations, 2) - 1
-                    for planeIndex in xrange(options.numOutputPlanes):
+                    for planeIndex in range(options.numOutputPlanes):
                         cv2.imwrite(options.test_dir + '/segmentation_' + str(planeIndex) + '.png', drawMaskImage(segmentation == planeIndex))
                         cv2.imwrite(options.test_dir + '/segmentation_' + str(planeIndex) + '_gt.png', drawMaskImage(gt_s[:, :, planeIndex]))
                         cv2.imwrite(options.test_dir + '/segmentation_' + str(planeIndex) + '_gt_ori.png', drawMaskImage(gt_s_ori[:, :, planeIndex]))
@@ -1157,7 +1157,7 @@ def predict(options):
         for index, im_name in enumerate(im_names):
             if index <= -1:
                 continue
-            print(im_name['image'])
+            print((im_name['image']))
             im = cv2.imread(im_name['image'])
             image = im.astype(np.float32, copy=False)
             image = image / 255 - 0.5
@@ -1175,7 +1175,7 @@ def predict(options):
 
             normal = np.array(PIL.Image.open(im_name['normal'])).astype(np.float) / 255 * 2 - 1
             norm = np.linalg.norm(normal, 2, 2)
-            for c in xrange(3):
+            for c in range(3):
                 normal[:, :, c] /= norm
                 continue
             normal = cv2.resize(normal, (WIDTH, HEIGHT), interpolation=cv2.INTER_LINEAR)
@@ -1248,7 +1248,7 @@ def predict(options):
             #writePLYFile(options.test_dir, index, image, pred_p, segmentation)
 
             if index < 0:
-                for planeIndex in xrange(options.numOutputPlanes):
+                for planeIndex in range(options.numOutputPlanes):
                     cv2.imwrite(options.test_dir + '/' + str(index) + '_segmentation_' + str(planeIndex) + '.png', drawMaskImage(pred_s[:, :, planeIndex]))
                     #cv2.imwrite(options.test_dir + '/' + str(index) + '_segmentation_' + str(planeIndex) + '_gt.png', drawMaskImage(gt_s[:, :, planeIndex]))
                     continue
@@ -1298,7 +1298,7 @@ def fitPlanesRGBD(options):
             gtDepths = []
             predDepths = []
             planeMasks = []
-            for index in xrange(10):
+            for index in range(10):
                 image, depth, path = sess.run([img_inp_rgbd, global_gt_dict_rgbd['depth'], global_gt_dict_rgbd['path']])
                 image = ((image[0] + 0.5) * 255).astype(np.uint8)
                 depth = depth.squeeze()
@@ -1477,7 +1477,7 @@ def parse_args():
 if __name__=='__main__':
     args = parse_args()
 
-    print "keyname=%s task=%s started"%(args.keyname, args.task)
+    print(("keyname=%s task=%s started"%(args.keyname, args.task)))
     try:
         if args.task == "train":
             main(args)

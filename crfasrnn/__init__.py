@@ -1,1 +1,1 @@
-import crfasrnn_layer
+from . import crfasrnn_layer

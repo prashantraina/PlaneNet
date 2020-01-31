@@ -89,7 +89,7 @@ class BallInMazeDemo(ShowBase):
         self.balls = []
         self.ballSpheres = []
         self.ballGroundRays = []
-        for ballIndex in xrange(3):
+        for ballIndex in range(3):
             ballRoot = render.attachNewNode("ballRoot_" + str(ballIndex))
             ball = loader.loadModel("models/ball_" + str(ballIndex) + "_center.egg")
             ball.setScale(self.ballSize, self.ballSize, self.ballSize)
@@ -397,7 +397,7 @@ class BallInMazeDemo(ShowBase):
 
         self.ballVs = []
         self.accelVs = []
-        for ballIndex in xrange(len(self.balls)):
+        for ballIndex in range(len(self.balls)):
             self.ballVs.append(LVector3(0, 0, 0))
             self.accelVs.append(LVector3(0, 0, 0))
             continue
@@ -438,7 +438,7 @@ class BallInMazeDemo(ShowBase):
                 self.hitIndex += 1                                
                 pass
             self.started = True
-            print('hit', cueDirection)
+            print(('hit', cueDirection))
             self.ballBouncing = np.full(len(self.balls), 3)
             pass
 
@@ -475,7 +475,7 @@ class BallInMazeDemo(ShowBase):
         #print(velAngle, hitAngle)
 
         if velAngle > 0 and hitAngle > .995:
-            print('plane', ballName, velAngle)
+            print(('plane', ballName, velAngle))
             # Standard reflection equation
             reflectVec = (norm * norm.dot(inVec * -1) * 2) + inVec
 
@@ -496,7 +496,7 @@ class BallInMazeDemo(ShowBase):
     # This function handles the collision between the ball and a wall
     def portal(self, colEntry):
         ballName = colEntry.getFromNode().getName()
-        print('portal', ballName)
+        print(('portal', ballName))
         ballIndex = int(ballName[5:])
         
         #norm = colEntry.getSurfaceNormal(render) * -1  # The normal of the wall
@@ -519,13 +519,13 @@ class BallInMazeDemo(ShowBase):
         #print(velAngle, hitAngle)
         #print(velAngle, hitAngle)
         if velAngle > 0:
-            print(colEntry.getIntoNode().getName())
+            print((colEntry.getIntoNode().getName()))
             if '_in' in colEntry.getIntoNode().getName():
                 self.ballRoots[ballIndex].setPos(self.outPortalRoot.getPos())
             else:
                 self.ballRoots[ballIndex].setPos(self.inPortalRoot.getPos())
                 pass
-            print(self.ballVs[ballIndex], ((norm * norm.dot(inVec * -1) * 2) + inVec) * curSpeed, norm)
+            print((self.ballVs[ballIndex], ((norm * norm.dot(inVec * -1) * 2) + inVec) * curSpeed, norm))
             #exit(1)
             self.ballVs[ballIndex] = ((norm * norm.dot(inVec * -1) * 2) + inVec) * curSpeed
             #self.ballVs[ballIndex] *= -1
@@ -543,7 +543,7 @@ class BallInMazeDemo(ShowBase):
         intoBallName = colEntry.getIntoNode().getName()
         intoBallIndex = int(intoBallName[5:])        
 
-        print('ball', fromBallName, intoBallName)
+        print(('ball', fromBallName, intoBallName))
         
         norm = colEntry.getSurfaceNormal(render) * -1  # The normal of the wall
         norm = norm / norm.length()
@@ -627,7 +627,7 @@ class BallInMazeDemo(ShowBase):
         #print(groundIndex)
         #print(self.ballGroundMap)
         if ballIndex == 0 and False:
-            print(groundIndex, self.ballGroundMap)
+            print((groundIndex, self.ballGroundMap))
             pass
         
         if ballIndex not in self.ballGroundMap or self.ballGroundMap[ballIndex][0] != groundIndex:
@@ -687,7 +687,7 @@ class BallInMazeDemo(ShowBase):
 
 
         if ballIndex == 0:
-            print('distance_1', self.started, distance, velAngle, self.ballVs[ballIndex], self.accelVs[ballIndex])
+            print(('distance_1', self.started, distance, velAngle, self.ballVs[ballIndex], self.accelVs[ballIndex]))
         
         if distance < self.ballSize:
             self.ballRoots[ballIndex].setPos(surfacePos - norm * self.ballSize)
@@ -834,7 +834,7 @@ class BallInMazeDemo(ShowBase):
         if self.showing == 'parts':
             self.showingProgress += 0.01
             #self.showingProgress += 1
-            print(self.showingProgress)
+            print((self.showingProgress))
             scale = 2 - self.showingProgress
             scaleY = 1 + (scale - 1) * 0.5
             for planeIndex, planeNP in enumerate(self.planeNPs):
@@ -974,7 +974,7 @@ class BallInMazeDemo(ShowBase):
             
         # Finally, we move the ball
         # Update the velocity based on acceleration
-        for ballIndex in xrange(len(self.balls)):
+        for ballIndex in range(len(self.balls)):
             if self.ballVs[ballIndex].length() < 1e-4 and self.ballVs[ballIndex].dot(self.accelVs[ballIndex]) < -1e-4:
                 self.ballVs[ballIndex] = LVector3(0, 0, 0)
                 self.accelVs[ballIndex] = LVector3(0, 0, 0)
@@ -1009,7 +1009,7 @@ class BallInMazeDemo(ShowBase):
         ballName = colEntry.getFromNode().getName()
         if 'ball_' not in ballName:
             return
-        print('score', ballName)
+        print(('score', ballName))
         ballIndex = int(ballName[5:])
         self.ballRoots[ballIndex].removeNode()
 
@@ -1019,7 +1019,7 @@ class BallInMazeDemo(ShowBase):
         del self.ballGroundRays[ballIndex]        
         del self.ballVs[ballIndex]
         del self.accelVs[ballIndex]
-        for otherIndex in xrange(ballIndex, len(self.balls)):
+        for otherIndex in range(ballIndex, len(self.balls)):
             self.ballSpheres[otherIndex].setName('ball_' + str(otherIndex))
             self.ballGroundRays[otherIndex].setName('ball_ray_' + str(otherIndex))
             continue
